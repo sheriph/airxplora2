@@ -39,8 +39,9 @@ export default function SimpleSearchSummary() {
   const retDate = cookies.xpaformData?.retDate;
 
   useEffect(() => {
-    const arr = cookies.xpaMultiTrip;
+    const arr = cookies?.xpaMultiTrip;
     if (arr) {
+      console.log(`arr`, arr);
       setStart(arr[0]);
       setEnd(arr[arr.length - 1]);
     }
