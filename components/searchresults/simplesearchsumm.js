@@ -9,6 +9,8 @@ import BookingForm from "../bookingform/bookingForm";
 import { useCookies } from "react-cookie";
 import dayjs from "dayjs";
 import { useMediaQuery } from "@material-ui/core";
+import { useRecoilState } from "recoil";
+import { defaultExpanded_ } from "../../lib/state";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,7 +26,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SimpleSearchSummary() {
   const classes = useStyles();
-  const [defaultExpanded, setDefaultExpanded] = useState(false);
+  const [defaultExpanded, setDefaultExpanded] =
+    useRecoilState(defaultExpanded_);
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
   const phone = useMediaQuery("(max-width:600px)");
   const [start, setStart] = useState(null);

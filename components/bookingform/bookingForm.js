@@ -18,7 +18,13 @@ import SearchIcon from "@material-ui/icons/Search";
 import Search from "./search";
 import { Controller, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
-import { isReturnTrip_, tripType_ } from "../../lib/state";
+import {
+  defaultExpanded_,
+  isReturnTrip_,
+  tab_,
+  tripType_,
+  xpaOffers_,
+} from "../../lib/state";
 import dayjs from "dayjs";
 import Alert from "@material-ui/lab/Alert";
 import MultiTrips from "./multitrip";
@@ -46,6 +52,10 @@ export default function BookingForm({ square = false }) {
   const [multitripCounter, setMultitripCounter] = useState([{}]);
   const [isLoading, setLoading] = useState(false);
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
+  const [tab, setTab] = useRecoilState(tab_);
+  const [results, setResults] = useRecoilState(xpaOffers_);
+  const [defaultExpanded, setDefaultExpanded] =
+    useRecoilState(defaultExpanded_);
 
   const {
     handleSubmit,
@@ -160,8 +170,11 @@ export default function BookingForm({ square = false }) {
       setLoading(true);
       const response = await getFlightOffers(postData);
       console.log("response", response);
+      setResults(response);
       window.localStorage.setItem("xpaOffers", JSON.stringify(response));
       setLoading(false);
+      setDefaultExpanded(false);
+      setTab("2");
     } catch (error) {
       console.log("error", error);
       setLoading(false);

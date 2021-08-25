@@ -63,6 +63,7 @@ export function MyDate({ onChange, value, isError }) {
     >
       <MuiPickersUtilsProvider utils={DayjsUtils}>
         <DatePicker
+          minDateMessage="Invalid date"
           orientation="portrait"
           disableToolbar
           animateYearScrolling
@@ -140,6 +141,7 @@ export function RetDate({ onChange, value, depDate, isError }) {
     >
       <MuiPickersUtilsProvider utils={DayjsUtils}>
         <DatePicker
+          minDateMessage="Invalid date"
           open={open2}
           onClose={(e) => setTimeout(() => setOpen2(false), 500)}
           orientation="portrait"
@@ -169,7 +171,8 @@ export function RetDate({ onChange, value, depDate, isError }) {
               </Box>
             );
           }}
-          disablePast
+          minDate={dayjs(depDate).format("YYYY-MM-DD")}
+          //disablePast
           //disableToolbar
           // className={classes.returnDateRoot}
           autoOk={mobile ? false : true}

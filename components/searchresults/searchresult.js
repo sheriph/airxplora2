@@ -2,15 +2,17 @@ import { Typography } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import LazyLoad from "react-lazyload";
+import { useRecoilState } from "recoil";
+import { xpaOffers_ } from "../../lib/state";
 import { Countdown } from "../../lib/utilities";
 import TripCard from "./tripcard";
 
 export default function SearchResult() {
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useRecoilState(xpaOffers_);
   console.log("?result", results);
 
   useEffect(() => {
-    if (window !== "undefined") {
+    if (window !== "undefined" && !results) {
       const results = window.localStorage.getItem("xpaOffers");
       if (results) {
         setResults(JSON.parse(results));

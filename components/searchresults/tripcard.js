@@ -108,7 +108,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
                   <Typography>{useMoney(grandTotal)}</Typography>
                 </Grid>
                 <Grid item>
-                  <Box mt={1}>
+                  <Box my={1}>
                     <Button
                       endIcon={<OpenInNewIcon />}
                       size="small"
