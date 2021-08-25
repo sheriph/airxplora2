@@ -1,6 +1,8 @@
+import { Typography } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import LazyLoad from "react-lazyload";
+import { Countdown } from "../../lib/utilities";
 import TripCard from "./tripcard";
 
 export default function SearchResult() {
@@ -9,14 +11,14 @@ export default function SearchResult() {
 
   useEffect(() => {
     if (window !== "undefined") {
-      const results = window.localStorage.getItem("1xpaOffers");
+      const results = window.localStorage.getItem("xpaOffers");
       if (results) {
         setResults(JSON.parse(results));
       }
     }
   }, [null]);
 
-  if (!results) return <>Please Make a new search ...</>;
+  if (!results) return <Typography>Please Make a new search ...</Typography>;
 
   const {
     data,

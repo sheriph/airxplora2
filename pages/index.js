@@ -12,7 +12,7 @@ import BookingForm from "../components/bookingform/bookingForm";
 import ResultPage from "../components/searchresults/resultpage";
 import MyDrawer from "../components/others/drawer";
 import { useRecoilState } from "recoil";
-import { dictionary_, flightOffer_, openDrawer_ } from "../lib/state";
+import { dictionary_, flightOffer_, openDrawer_, tab_ } from "../lib/state";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
 
 const useStyles = makeStyles({
@@ -25,10 +25,10 @@ const useStyles = makeStyles({
 export default function Airxplora() {
   const classes = useStyles();
 
-  const [value, setValue] = useState("1");
+  const [tab, setTab] = useRecoilState(tab_);
 
   const handleChange = (event, newValue) => {
-    setValue(newValue);
+    setTab(newValue);
   };
   const [flightOffer, setFlightOffer] = useRecoilState(flightOffer_);
   const [open, setOpen] = useRecoilState(openDrawer_);
@@ -39,7 +39,7 @@ export default function Airxplora() {
       <MyDrawer handleClose={() => setOpen(false)} open={open}>
         <DetailedTripInfo dictionary={dictionary} flightOffer={flightOffer} />
       </MyDrawer>
-      <TabContext value={value}>
+      <TabContext value={tab}>
         <AppBar position="static">
           <TabList onChange={handleChange} aria-label="flight booking tab">
             <Tab

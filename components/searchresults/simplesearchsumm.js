@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SimpleSearchSummary() {
   const classes = useStyles();
+  const [defaultExpanded, setDefaultExpanded] = useState(false);
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
   const phone = useMediaQuery("(max-width:600px)");
   const [start, setStart] = useState(null);
@@ -39,25 +40,38 @@ export default function SimpleSearchSummary() {
 
   useEffect(() => {
     const arr = cookies.xpaMultiTrip;
-    setStart(arr[0]);
-    setEnd(arr[arr.length - 1]);
+    if (arr) {
+      setStart(arr[0]);
+      setEnd(arr[arr.length - 1]);
+    }
     const passengers = cookies.xpaformData?.passengers;
     setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
+    if (window !== "undefined") {
+      const results = window.localStorage.getItem("xpaOffers");
+      if (!results) {
+        setTimeout(() => {
+          setDefaultExpanded(true);
+        }, 5000);
+      }
+    }
   }, [null]);
 
   return (
     <div className={classes.root}>
-      <Accordion classes={{ expanded: classes.accordionExpanded }}>
+      <Accordion
+        expanded={defaultExpanded}
+        classes={{ expanded: classes.accordionExpanded }}
+      >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
           id="panel1a-header"
+          onClick={() => setDefaultExpanded(!defaultExpanded)}
         >
           {tripType === "Multi-City" ? (
             <Typography className={classes.heading}>
               {tripType} from {start?.from.iataCode} to {end?.to.iataCode} |{" "}
-              {traveller}{" "}
-              Traveller(s) {phone ? <br /> : " | "}
+              {traveller} Traveller(s) {phone ? <br /> : " | "}
               {dayjs(start?.depDate).format("ddd, DD MMM")}{" "}
             </Typography>
           ) : (
