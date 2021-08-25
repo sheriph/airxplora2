@@ -41,12 +41,14 @@ export default function SimpleSearchSummary() {
   useEffect(() => {
     const arr = cookies?.xpaMultiTrip;
     if (arr) {
-      console.log(`arr`, arr);
       setStart(arr[0]);
       setEnd(arr[arr.length - 1]);
     }
     const passengers = cookies.xpaformData?.passengers;
-    setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
+    console.log(`arr`, arr, passengers);
+    if (passengers) {
+      setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
+    }
     if (window !== "undefined") {
       const results = window.localStorage.getItem("xpaOffers");
       if (!results) {
