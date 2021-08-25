@@ -9,14 +9,14 @@ export default function SearchResult() {
 
   useEffect(() => {
     if (window !== "undefined") {
-      const results = window.localStorage.getItem("xpaOffers");
+      const results = window.localStorage.getItem("1xpaOffers");
       if (results) {
         setResults(JSON.parse(results));
       }
     }
   }, [null]);
 
-  if (!results) return <>Loading ...</>;
+  if (!results) return <>Please Make a new search ...</>;
 
   const {
     data,
