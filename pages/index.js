@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
@@ -12,7 +12,15 @@ import BookingForm from "../components/bookingform/bookingForm";
 import ResultPage from "../components/searchresults/resultpage";
 import MyDrawer from "../components/others/drawer";
 import { useRecoilState } from "recoil";
-import { dictionary_, flightOffer_, openDrawer_, tab_ } from "../lib/state";
+import {
+  flightOffer_,
+  openDrawer_,
+  tab_,
+  xpaCarriers_,
+  xpaDictionary_,
+  xpaOffersFixed_,
+  xpaOffers_,
+} from "../lib/state";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
 
 const useStyles = makeStyles({
@@ -30,14 +38,42 @@ export default function Airxplora() {
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
-  const [flightOffer, setFlightOffer] = useRecoilState(flightOffer_);
+  const [flightOfferState, setFlightOffer] = useRecoilState(flightOffer_);
   const [open, setOpen] = useRecoilState(openDrawer_);
-  const [dictionary, setDictionary] = useRecoilState(dictionary_);
+  const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
+  const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
+  const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
+  const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
+
+  // const [results, setResults] = useRecoilState(xpaOffers_);
+  // console.log("?result", results);
+
+  useEffect(() => {
+    if (window !== "undefined" && !flightOffers) {
+      const results = window.localStorage.getItem("xpaOffers");
+      if (results) {
+        const {
+          data,
+          dictionaries: { carriers },
+          dictionaries,
+        } = JSON.parse(results);
+        setDictionary(dictionaries);
+        setOffers(data);
+        setOffersFixed(data);
+        setCarriers(carriers);
+      }
+    }
+  }, [null]);
+
+  console.log(`index flightOffers`, flightOffers);
 
   return (
     <Box>
       <MyDrawer handleClose={() => setOpen(false)} open={open}>
-        <DetailedTripInfo dictionary={dictionary} flightOffer={flightOffer} />
+        <DetailedTripInfo
+          dictionary={dictionary}
+          flightOffer={flightOfferState}
+        />
       </MyDrawer>
       <TabContext value={tab}>
         <AppBar position="static">
@@ -63,7 +99,11 @@ export default function Airxplora() {
           <BookingForm />
         </TabPanel>
         <TabPanel value="2">
-          <ResultPage />
+          <ResultPage
+            flightOffers={flightOffers}
+            carriers={carriers}
+            dictionary={dictionary}
+          />
         </TabPanel>
         <TabPanel value="3">3</TabPanel>
       </TabContext>
