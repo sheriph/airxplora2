@@ -7,30 +7,13 @@ import { xpaOffers_ } from "../../lib/state";
 import { Countdown } from "../../lib/utilities";
 import TripCard from "./tripcard";
 
-export default function SearchResult() {
-  const [results, setResults] = useRecoilState(xpaOffers_);
-  console.log("?result", results);
-
-  useEffect(() => {
-    if (window !== "undefined" && !results) {
-      const results = window.localStorage.getItem("xpaOffers");
-      if (results) {
-        setResults(JSON.parse(results));
-      }
-    }
-  }, [null]);
-
-  if (!results) return <Typography>Please Make a new search ...</Typography>;
-
-  const {
-    data,
-    dictionaries: { carriers },
-    dictionaries,
-  } = results;
+export default function SearchResult({ flightOffers, carriers, dictionary }) {
+  if (!flightOffers)
+    return <Typography>Please Make a new search ...</Typography>;
 
   return (
     <Grid container>
-      {data.map((flightOffer, index) => (
+      {flightOffers.map((flightOffer, index) => (
         <LazyLoad
           style={{ width: "100%", paddingBottom: "15px" }}
           key={index}
@@ -39,7 +22,7 @@ export default function SearchResult() {
           <Grid item xs={12}>
             <TripCard
               flightOffer={flightOffer}
-              dictionaries={dictionaries}
+              dictionaries={dictionary}
               carriers={carriers}
             />
           </Grid>

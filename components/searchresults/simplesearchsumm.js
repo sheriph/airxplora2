@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   accordionExpanded: { marginBottom: "50px !important" },
 }));
 
-export default function SimpleSearchSummary() {
+export default function SimpleSearchSummary({ flightOffers }) {
   const classes = useStyles();
   const [defaultExpanded, setDefaultExpanded] =
     useRecoilState(defaultExpanded_);
@@ -53,8 +53,8 @@ export default function SimpleSearchSummary() {
       setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
     }
     if (window !== "undefined") {
-      const results = window.localStorage.getItem("xpaOffers");
-      if (!results) {
+      // const results = window.localStorage.getItem("xpaOffers");
+      if (!flightOffers) {
         setTimeout(() => {
           setDefaultExpanded(true);
         }, 5000);

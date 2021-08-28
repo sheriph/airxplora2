@@ -23,12 +23,14 @@ export default function MyDrawer({
   handleClose,
   elevation = 16,
   anchor = "right",
+  keepMounted = false,
 }) {
   const classes = styles();
   return (
     <Drawer
       // @ts-ignore
       anchor={anchor}
+      keepMounted={keepMounted}
       elevation={elevation}
       onClose={handleClose}
       open={open}

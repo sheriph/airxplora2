@@ -13,7 +13,7 @@ import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MyDrawer from "../others/drawer";
 import DetailedTripInfo from "./detailedtripinfo";
 import { useRecoilState } from "recoil";
-import { dictionary_, flightOffer_, openDrawer_ } from "../../lib/state";
+import { flightOffer_, openDrawer_ } from "../../lib/state";
 
 export default function TripCard({ flightOffer, carriers, dictionaries }) {
   const tab = useMediaQuery("(max-width:960px)");
@@ -23,10 +23,9 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
     travelerPricings: [firstTraveller, ...rest],
   } = flightOffer;
   const { fareDetailsBySegment } = firstTraveller;
-  console.log(`flightOffer`, flightOffer);
+ // console.log(`flightOffer`, flightOffer);
   const [flightOfferState, setFlightOffer] = useRecoilState(flightOffer_);
   const [open, setOpen] = useRecoilState(openDrawer_);
-  const [dictionary, setDictionary] = useRecoilState(dictionary_);
 
   return (
     <>
@@ -42,7 +41,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
         >
           <Grid item xs>
             {itineraries.map((itinerary, index) => {
-              console.log("itinerary", itinerary);
+            //  console.log("itinerary", itinerary);
               const { segments } = itinerary;
               const { duration } = itinerary;
               const firstSegment = segments[0];
@@ -55,7 +54,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
               const arrivalTime = dayjs(arrival.at).format("h:ma");
               const departureAirport = departure.iataCode;
               const arrivalAirport = arrival.iataCode;
-              console.log(departure, arrival);
+            //  console.log(departure, arrival);
               const stop = segments.length - 1;
               const stopOver = stop === 0 ? "Direct" : `${stop} Stop`;
               return (
@@ -116,7 +115,6 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
                       color="primary"
                       onClick={() => {
                         setFlightOffer(flightOffer);
-                        setDictionary(dictionaries);
                         setOpen(true);
                       }}
                     >
@@ -142,7 +140,6 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
                       color="primary"
                       onClick={() => {
                         setFlightOffer(flightOffer);
-                        setDictionary(dictionaries);
                         setOpen(true);
                       }}
                     >

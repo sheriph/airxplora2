@@ -23,6 +23,9 @@ import {
   isReturnTrip_,
   tab_,
   tripType_,
+  xpaCarriers_,
+  xpaDictionary_,
+  xpaOffersFixed_,
   xpaOffers_,
 } from "../../lib/state";
 import dayjs from "dayjs";
@@ -53,7 +56,11 @@ export default function BookingForm({ square = false }) {
   const [isLoading, setLoading] = useState(false);
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
   const [tab, setTab] = useRecoilState(tab_);
-  const [results, setResults] = useRecoilState(xpaOffers_);
+  const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
+  const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
+  const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
+  const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
+
   const [defaultExpanded, setDefaultExpanded] =
     useRecoilState(defaultExpanded_);
 
@@ -148,7 +155,7 @@ export default function BookingForm({ square = false }) {
         multTripItinerary
       ),
       searchCriteria: {
-        maxFlightOffers: 50,
+        maxFlightOffers: 250,
         flightFilters: {
           cabinRestrictions: [
             {
@@ -170,7 +177,15 @@ export default function BookingForm({ square = false }) {
       setLoading(true);
       const response = await getFlightOffers(postData);
       console.log("response", response);
-      setResults(response);
+      const {
+        data,
+        dictionaries: { carriers },
+        dictionaries,
+      } = response;
+      setDictionary(dictionaries);
+      setOffers(data);
+      setOffersFixed(data);
+      setCarriers(carriers);
       window.localStorage.setItem("xpaOffers", JSON.stringify(response));
       setLoading(false);
       setDefaultExpanded(false);
