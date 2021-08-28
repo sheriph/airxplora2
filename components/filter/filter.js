@@ -18,7 +18,7 @@ const styles = makeStyles((theme) => ({
   gridContainer: { padding: "10px" },
 }));
 
-export default function Filter({ handleClose = null }) {
+export default function Filter({ handleClose = null, carriers }) {
   const classes = styles();
   const [flightOffersFlexible, setFlexibleOffers] = useRecoilState(xpaOffers_);
   const [flightOffersFixed, setFixedOffers] = useRecoilState(xpaOffersFixed_);
@@ -83,6 +83,7 @@ export default function Filter({ handleClose = null }) {
       </Grid>
       <Grid item component={Paper} className={classes.gridItem}>
         <AirlineFilter
+          carriers={carriers}
           setAirlineData={setAirlineData}
           flightOffersFixed={flightOffersFixed}
         />

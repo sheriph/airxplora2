@@ -30,7 +30,7 @@ export default function ResultPage({ flightOffers, carriers, dictionary }) {
         anchor="left"
       >
         <Box p={2}>
-          <Filter handleClose={handleClose} />
+          <Filter carriers={carriers} handleClose={handleClose} />
         </Box>
       </MyDrawer>
       <Grid container spacing={3}>
@@ -51,7 +51,7 @@ export default function ResultPage({ flightOffers, carriers, dictionary }) {
           <Grid container spacing={2}>
             {!mobile && (
               <Grid item xs={3}>
-                <Filter />
+                <Filter carriers={carriers} />
               </Grid>
             )}
             <Grid item xs>

@@ -8,8 +8,13 @@ import { Grid } from "@material-ui/core";
 import { keys, lowerCase, pickBy, startCase } from "lodash";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { getAirportName } from "../../lib/utilities";
 
-export default function AirlineFilter({ flightOffersFixed, setAirlineData }) {
+export default function AirlineFilter({
+  flightOffersFixed,
+  setAirlineData,
+  carriers,
+}) {
   const [airline, setAirline] = useState([]);
   const {
     register,
@@ -27,12 +32,12 @@ export default function AirlineFilter({ flightOffersFixed, setAirlineData }) {
         });
       });
     });
-  // console.log(`set`, set);
+    // console.log(`set`, set);
     setAirline(Array.from(set));
   }, [null]);
 
   const onSubmit = (data) => {
-   // console.log(data);
+    // console.log(data);
     setAirlineData(data);
   };
 
@@ -65,7 +70,7 @@ export default function AirlineFilter({ flightOffersFixed, setAirlineData }) {
                       handleSubmit(onSubmit)();
                     }}
                     control={<Checkbox color="primary" />}
-                    label={carrierCode}
+                    label={startCase(lowerCase(carriers[carrierCode]))}
                     labelPlacement="end"
                   />
                 );
