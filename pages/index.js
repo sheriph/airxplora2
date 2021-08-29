@@ -21,6 +21,7 @@ import {
   xpaOffersFixed_,
   xpaOffers_,
 } from "../lib/state";
+import FinaliseBooking from "../components/finalisebooking/finalisebooking";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
 
 const useStyles = makeStyles({
@@ -65,14 +66,19 @@ export default function Airxplora() {
     }
   }, [null]);
 
-  console.log(`index flightOffers`, flightOffers);
+ // console.log(`index flightOffers`, flightOffers);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Box>
-      <MyDrawer handleClose={() => setOpen(false)} open={open}>
+      <MyDrawer handleClose={handleClose} open={open}>
         <DetailedTripInfo
           dictionary={dictionary}
           flightOffer={flightOfferState}
+          handleClose={handleClose}
         />
       </MyDrawer>
       <TabContext value={tab}>
@@ -105,7 +111,9 @@ export default function Airxplora() {
             dictionary={dictionary}
           />
         </TabPanel>
-        <TabPanel value="3">3</TabPanel>
+        <TabPanel value="3">
+          <FinaliseBooking />
+        </TabPanel>
       </TabContext>
     </Box>
   );

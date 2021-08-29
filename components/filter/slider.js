@@ -59,7 +59,6 @@ function AirbnbThumbComponent(props) {
 
 export default function CustomizedSlider({ flightOffersFixed, setPriceRange }) {
   const minMax = getMinMax(flightOffersFixed);
-  console.log("price", minMax);
 
   const [price, setPrice] = useState(minMax);
   useEffect(() => {

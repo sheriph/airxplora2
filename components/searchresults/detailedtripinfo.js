@@ -9,17 +9,30 @@ import { Divider } from "@material-ui/core";
 import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 import dayjs from "dayjs";
-import { getAirportName, getCabin, getLayover } from "../../lib/utilities";
+import {
+  getAirportName,
+  getBaggage,
+  getCabin,
+  getLayover,
+} from "../../lib/utilities";
 import duration from "dayjs/plugin/duration";
 import { lowerCase, startCase } from "lodash";
+import { flightOfferExtended_ } from "../../lib/state";
+import { useRecoilState } from "recoil";
 
-export default function DetailedTripInfo({ flightOffer, dictionary }) {
+export default function DetailedTripInfo({
+  flightOffer,
+  dictionary,
+  handleClose,
+}) {
   if (!flightOffer) return <>...</>;
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
   console.log(`cookies`, cookies.xpaformData);
   const tripType = cookies?.xpaformData?.tripType;
   console.log(`flightOffer`, flightOffer, dictionary);
   dayjs.extend(duration);
+  const [flightOfferExtended, setOfferExtended] =
+    useRecoilState(flightOfferExtended_);
 
   const { aircraft, carriers } = dictionary;
 
@@ -37,7 +50,9 @@ export default function DetailedTripInfo({ flightOffer, dictionary }) {
       <Grid item xs={12}>
         <TripDetailHeader
           grandTotal={grandTotal}
+          flightOffer={flightOffer}
           travelerPricings={travelerPricings}
+          handleClose={handleClose}
         />
       </Grid>
       {flightOffer.itineraries.map((itinerary, itineraryIndex, itineraries) => {
@@ -110,6 +125,12 @@ export default function DetailedTripInfo({ flightOffer, dictionary }) {
                   <Grid item xs={12}>
                     <Box pt={1} pb={3}>
                       <TripStop
+                        baggage={getBaggage(
+                          flightOfferExtended,
+                          segment.id,
+                          flightOfferExtended?.pricingOptions
+                            ?.includedCheckedBagsOnly
+                        )}
                         // firstLeg={segmentIndex === 0 ? true : false}
                         lastLeg={
                           segments.length - 1 === segmentIndex ? true : false

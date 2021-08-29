@@ -33,7 +33,7 @@ export default function SimpleSearchSummary({ flightOffers }) {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
   const [traveller, setTraveller] = useState(0);
-  console.log(`cookies`, cookies.xpaformData);
+ // console.log(`cookies`, cookies.xpaformData);
 
   const tripType = cookies.xpaformData?.tripType;
   const from = cookies.xpaformData?.from;
@@ -48,7 +48,7 @@ export default function SimpleSearchSummary({ flightOffers }) {
       setEnd(arr[arr.length - 1]);
     }
     const passengers = cookies.xpaformData?.passengers;
-    console.log(`arr`, arr, passengers);
+   // console.log(`arr`, arr, passengers);
     if (passengers) {
       setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
     }

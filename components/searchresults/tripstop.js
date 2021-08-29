@@ -91,7 +91,9 @@ export default function TripStop({
                 title="Baggage Allowance"
                 icon={<LocalMallIcon color="primary" />}
               >
-                Not Available
+                {baggage.map((bag) => (
+                  <Typography>{bag}</Typography>
+                ))}
               </CustomAccordion>
             </Grid>
             <Grid item>

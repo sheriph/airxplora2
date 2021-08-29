@@ -5,14 +5,27 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { Button, Grid, useMediaQuery } from "@material-ui/core";
+import {
+  Button,
+  CircularProgress,
+  Grid,
+  useMediaQuery,
+} from "@material-ui/core";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Box } from "@material-ui/core";
 import PriceTable from "./pricetable";
-import { useMoney } from "../../lib/utilities";
-import { openDrawer_ } from "../../lib/state";
+import { useMoney, verifyPrice } from "../../lib/utilities";
+import {
+  flightOfferExtended_,
+  included_,
+  openDrawer_,
+  tab_,
+  travelerRequirements_,
+  xpaBookingOffer_,
+} from "../../lib/state";
 import { useRecoilState } from "recoil";
+import { useSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,11 +37,59 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TripDetailHeader({ grandTotal, travelerPricings }) {
+export default function TripDetailHeader({
+  grandTotal,
+  flightOffer,
+  travelerPricings,
+  handleClose,
+}) {
   const classes = useStyles();
   const [expand, setExpand] = useState(false);
-  const mini = useMediaQuery("(max-width:300px)");
+  const mini = useMediaQuery("(max-width:400px)");
   const [open, setOpen] = useRecoilState(openDrawer_);
+  const [bookingOffer, setOffer] = useRecoilState(xpaBookingOffer_);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [tab, setTab] = useRecoilState(tab_);
+  const [travelerRequirements, setRequirements] = useRecoilState(
+    travelerRequirements_
+  );
+  const [included, setIncluded] = useRecoilState(included_);
+  const [flightOfferExtended, setOfferExtended] =
+    useRecoilState(flightOfferExtended_);
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const bookNow = async () => {
+    try {
+      setIsVerifying(true);
+      const response = await verifyPrice(flightOffer);
+      setIsVerifying(false);
+      window.localStorage.setItem("xpaBookingOffer", JSON.stringify(response));
+      const { data, included } = response;
+      const { flightOffers, bookingRequirements } = data;
+      console.log(`bookingRequirements`, bookingRequirements);
+      setRequirements(bookingRequirements?.travelerRequirements);
+      setIncluded(included);
+      setOfferExtended(flightOffers[0]);
+      //  setOffer(response);
+      setTab("3");
+      console.log(`response`, response);
+      handleClose();
+    } catch (error) {
+      console.log(`error`, error);
+      enqueueSnackbar(
+        "Seems like the seat has just been sold, please search again to verify available and book again",
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+          autoHideDuration: 10000,
+        }
+      );
+    }
+  };
 
   return (
     <div className={classes.root}>
@@ -44,7 +105,7 @@ export default function TripDetailHeader({ grandTotal, travelerPricings }) {
             alignItems="center"
             justifyContent="space-around"
           >
-            <Grid item xs onClick={() => setOpen(false)}>
+            <Grid item xs={mini ? false : true} onClick={() => setOpen(false)}>
               <ClearIcon />
             </Grid>
             <Grid item xs>
@@ -69,11 +130,35 @@ export default function TripDetailHeader({ grandTotal, travelerPricings }) {
               </Button>
             </Grid>
             <Grid item xs>
-              <Box display="flex" justifyContent="flex-end">
-                <Button variant="contained" color="primary">
-                  <span style={{ whiteSpace: "nowrap" }}>Book Now</span>
-                </Button>
-              </Box>
+              {tab === "2" && (
+                <Box display="flex" justifyContent="flex-end">
+                  <Grid
+                    container
+                    justifyContent="flex-end"
+                    direction={isVerifying ? "column" : "row"}
+                  >
+                    <Grid item>
+                      <Button
+                        disabled={isVerifying}
+                        endIcon={
+                          isVerifying ? <CircularProgress size="20px" /> : ""
+                        }
+                        onClick={bookNow}
+                        variant="contained"
+                        color="primary"
+                        // size="small"
+                      >
+                        <span style={{ whiteSpace: "nowrap" }}>Book Now</span>
+                      </Button>
+                    </Grid>
+                    {isVerifying && (
+                      <Grid item>
+                        <span>Please wait...</span>
+                      </Grid>
+                    )}
+                  </Grid>
+                </Box>
+              )}
             </Grid>
           </Grid>
         </AccordionSummary>

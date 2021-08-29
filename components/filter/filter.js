@@ -41,7 +41,7 @@ export default function Filter({ handleClose = null, carriers }) {
     JSON.stringify(airlineData),
   ]);
 
-  console.log(`flightOffersFlexible`, flightOffersFlexible);
+// console.log(`flightOffersFlexible`, flightOffersFlexible);
 
   return (
     <Grid container direction="column">
