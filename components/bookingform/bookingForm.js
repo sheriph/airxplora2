@@ -155,7 +155,7 @@ export default function BookingForm({ square = false }) {
         multTripItinerary
       ),
       searchCriteria: {
-        maxFlightOffers: 250,
+        maxFlightOffers: 5,
         flightFilters: {
           cabinRestrictions: [
             {

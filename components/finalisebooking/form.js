@@ -9,7 +9,7 @@ import {
 import { Box } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import { lowerCase, startCase } from "lodash";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
@@ -18,8 +18,14 @@ import { Autocomplete } from "@material-ui/lab";
 import { countries } from "./country";
 import DateSelector from "./dateselector";
 import dayjs from "dayjs";
-import { schema } from "../../lib/utilities";
+import { axiosAirxplora, schema } from "../../lib/utilities";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { pickBy } from "lodash";
+import { values } from "lodash";
+import { first } from "lodash";
+import { useSnackbar } from "notistack";
+import { useRecoilState } from "recoil";
+import Loader from "../others/loader";
 
 export default function Form({ flightOfferExtended, travelerRequirements }) {
   const {
@@ -27,14 +33,185 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
     handleSubmit,
     watch,
     control,
+    setError,
+    clearErrors,
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
-  const onSubmit = (data) => console.log(data);
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [isloading, setLoading] = useState(false);
+
+  const onSubmit = async (data) => {
+    console.log(
+      "data",
+      data,
+      pickBy(data, (value, key) => key.includes("gender"))
+    );
+    const gender = pickBy(data, (value, key) => key.includes("gender"));
+    for (let item in gender) {
+      console.log(gender[item]);
+      if (!gender[item]) {
+        enqueueSnackbar("Please select a gender", {
+          variant: "error",
+          anchorOrigin: { horizontal: "right", vertical: "top" },
+        });
+        return;
+      }
+    }
+    console.log(`flightOfferExtended`, flightOfferExtended);
+    const pickItem = (identifier, travelerId) => {
+      if (!identifier) return "";
+      return first(
+        values(
+          pickBy(
+            data,
+            (value, key) =>
+              key.includes(identifier) && key.includes(`${travelerId}`)
+          )
+        )
+      );
+    };
+
+    console.log(`pickItem`, pickItem("nationality", "1"));
+
+    const travelers = flightOfferExtended.travelerPricings.map((traveler) => {
+      return {
+        id: traveler.travelerId,
+        name: {
+          firstName: pickItem("othernames", traveler.travelerId),
+          lastName: pickItem("surname", traveler.travelerId),
+        },
+        gender:
+          pickItem("gender", traveler.travelerId) === "Mr" ? "MALE" : "FEMALE",
+        dateOfBirth: pickItem("dob", traveler.travelerId)
+          ? dayjs(pickItem("dob", traveler.travelerId)).format("YYYY-MM-DD")
+          : "1990-01-01",
+        contact: {
+          emailAddress: data.email,
+          phones: [
+            {
+              deviceType: "MOBILE",
+              countryCallingCode: "234",
+              number: data.phone,
+            },
+          ],
+        },
+        documents: [
+          {
+            documentType: "PASSPORT",
+            birthPlace: "Lagos",
+            issuanceLocation: "Lagos",
+            issuanceDate: pickItem("issueDate", traveler.travelerId)
+              ? dayjs(pickItem("issueDate", traveler.travelerId)).format(
+                  "YYYY-MM-DD"
+                )
+              : "1990-01-01",
+            number: pickItem("passportNumber", traveler.travelerId)
+              ? pickItem("passportNumber", traveler.travelerId)
+              : "A0123456",
+            expiryDate: pickItem("expiryDate", traveler.travelerId)
+              ? dayjs(pickItem("expiryDate", traveler.travelerId)).format(
+                  "YYYY-MM-DD"
+                )
+              : "2050-01-01",
+            issuanceCountry: pickItem("nationality", traveler.travelerId)
+              ? pickItem("nationality", traveler.travelerId)["code"]
+              : "NG",
+            validityCountry: pickItem("nationality", traveler.travelerId)
+              ? pickItem("nationality", traveler.travelerId)["code"]
+              : "NG",
+            nationality: pickItem("nationality", traveler.travelerId)
+              ? pickItem("nationality", traveler.travelerId)["code"]
+              : "NG",
+            holder: true,
+          },
+        ],
+      };
+    });
+
+    console.log(`travelers`, travelers);
+    const remarks = {
+      general: [
+        {
+          subType: "GENERAL_MISCELLANEOUS",
+          text: "ONLINE BOOKING FROM INCREIBLE VIAJES",
+        },
+      ],
+    };
+
+    const contacts = [
+      {
+        addresseeName: {
+          firstName: "Sheriff",
+          lastName: "Adeniyi",
+        },
+        companyName: "NAIJAGOINGABROAD LTD",
+        purpose: "STANDARD",
+        phones: [
+          {
+            deviceType: "MOBILE",
+            countryCallingCode: "234",
+            number: "9065369929",
+          },
+        ],
+        emailAddress: "info@naijagoingabroad.com",
+        address: {
+          lines: ["Opebi Rd, 65c"],
+          postalCode: "23401",
+          cityName: "Ikeja",
+          countryCode: "NG",
+        },
+      },
+    ];
+
+    const ticketingAgreement = {
+      option: "DELAY_TO_CANCEL",
+      delay: "6D",
+    };
+
+    const flightOrder = {
+      data: {
+        type: "flight-order",
+        flightOffers: [flightOfferExtended],
+        travelers: travelers,
+        remarks: remarks,
+        ticketingAgreement: ticketingAgreement,
+        contacts: contacts,
+      },
+    };
+
+    let postData = flightOrder;
+    console.log(`flightOrder`, flightOrder);
+    let config = {
+      method: "post",
+      url: "https://test.api.amadeus.com/v1/booking/flight-orders",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(
+          window.localStorage.getItem("access_token")
+        )}`,
+      },
+      data: postData,
+    };
+    try {
+      setLoading(true);
+      const response = await axiosAirxplora(config, 2);
+      console.log(`response`, response);
+    } catch (error) {
+      console.log(`error`, error);
+      enqueueSnackbar(<Box>{error.message}</Box>, {
+        variant: "error",
+        anchorOrigin: { horizontal: "right", vertical: "top" },
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   console.log(`errors`, errors);
   const theme = useTheme();
   return (
     <Paper>
+      <Loader open={isloading} />
       <Container>
         <Grid
           spacing={2}
@@ -48,9 +225,13 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
             </Typography>
           </Grid>
           {flightOfferExtended.travelerPricings.map((traveler, index) => {
-            const [requirements] = travelerRequirements.filter(
-              (item) => item.travelerId === traveler.travelerId
-            );
+            let requirements;
+            [requirements] = travelerRequirements
+              ? travelerRequirements?.filter(
+                  (item) => item.travelerId === traveler.travelerId
+                )
+              : [null];
+            console.log(traveler.travelerType);
             const getDateSubtract = () => {
               switch (traveler.travelerType) {
                 case "ADULT":
@@ -96,12 +277,22 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                           )
                         )}
                       </span>
+                      &nbsp;
+                      <span>
+                        ({startCase(lowerCase(traveler.travelerType))})
+                      </span>
                     </Typography>
                   </Grid>
                   <Grid item xs={12}>
                     <Controller
-                      rules={{ required: true }}
-                      name={`gender-${traveler.travelerType}-${index}`}
+                      rules={{
+                        required: true,
+                        validate: (value) => {
+                          console.log("value", value);
+                          return false;
+                        },
+                      }}
+                      name={`gender-${traveler.travelerType}-${traveler.travelerId}`}
                       control={control}
                       defaultValue=""
                       render={({ field: { onChange, value } }) => {
@@ -109,6 +300,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                           <div>
                             {["Mr", "Ms", "Mrs"].map((gender, index) => (
                               <FormControlLabel
+                                //onError
                                 key={index}
                                 checked={value === gender}
                                 value={gender}
@@ -126,7 +318,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                   <Grid item xs={12} sm={6}>
                     <Controller
                       rules={{ required: true }}
-                      name={`surname-${traveler.travelerType}-${index}`}
+                      name={`surname-${traveler.travelerType}-${traveler.travelerId}`}
                       control={control}
                       defaultValue=""
                       render={({ field: { onChange, value } }) => {
@@ -148,7 +340,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                   <Grid item xs={12} sm={6}>
                     <Controller
                       rules={{ required: true }}
-                      name={`othernames-${traveler.travelerType}-${index}`}
+                      name={`othernames-${traveler.travelerType}-${traveler.travelerId}`}
                       control={control}
                       defaultValue=""
                       render={({ field: { onChange, value } }) => {
@@ -172,7 +364,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                       <Grid item xs={12} sm={6}>
                         <Controller
                           rules={{ required: true }}
-                          name={`passportNumber-${traveler.travelerType}-${index}`}
+                          name={`passportNumber-${traveler.travelerType}-${traveler.travelerId}`}
                           control={control}
                           defaultValue=""
                           render={({ field: { onChange, value } }) => {
@@ -194,7 +386,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                       <Grid item xs={12} sm={6}>
                         <Controller
                           rules={{ required: true }}
-                          name={`nationality-${traveler.travelerType}-${index}`}
+                          name={`nationality-${traveler.travelerType}-${traveler.travelerId}`}
                           control={control}
                           // defaultValue="Nigeria"
                           render={({ field: { onChange, value } }) => {
@@ -229,7 +421,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                       <Grid item xs={12} sm={6}>
                         <Controller
                           rules={{ required: true }}
-                          name={`issueDate-${traveler.travelerType}-${index}`}
+                          name={`issueDate-${traveler.travelerType}-${traveler.travelerId}`}
                           control={control}
                           defaultValue={dayjs()}
                           render={({ field: { onChange, value } }) => {
@@ -251,7 +443,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                       <Grid item xs={12} sm={6}>
                         <Controller
                           rules={{ required: true }}
-                          name={`expiryDate-${traveler.travelerType}-${index}`}
+                          name={`expiryDate-${traveler.travelerType}-${traveler.travelerId}`}
                           control={control}
                           defaultValue={dayjs()}
                           render={({ field: { onChange, value } }) => {
@@ -272,11 +464,13 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                       </Grid>
                     </>
                   )}
-                  {requirements?.dateOfBirthRequired && (
+                  {requirements?.dateOfBirthRequired ||
+                  traveler.travelerType === "CHILD" ||
+                  traveler.travelerType === "HELD_INFANT" ? (
                     <Grid item xs={12} sm={6}>
                       <Controller
                         rules={{ required: true }}
-                        name={`dob-${traveler.travelerType}-${index}`}
+                        name={`dob-${traveler.travelerType}-${traveler.travelerId}`}
                         control={control}
                         defaultValue={dayjs()}
                         render={({ field: { onChange, value } }) => {
@@ -295,6 +489,8 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
                         }}
                       />
                     </Grid>
+                  ) : (
+                    ""
                   )}
                 </Grid>
               </Grid>

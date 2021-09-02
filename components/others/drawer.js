@@ -33,6 +33,7 @@ export default function MyDrawer({
       keepMounted={keepMounted}
       elevation={elevation}
       onClose={handleClose}
+      // @ts-ignore
       open={open}
       classes={{ paperAnchorRight: classes.drawer }}
     >

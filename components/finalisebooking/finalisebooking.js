@@ -31,7 +31,7 @@ export default function FinaliseBooking() {
       if (response) {
         const { data, included } = JSON.parse(response);
         const { flightOffers, bookingRequirements } = data;
-      //  console.log(`bookingRequirements`, bookingRequirements);
+        //  console.log(`bookingRequirements`, bookingRequirements);
         setRequirements(bookingRequirements?.travelerRequirements);
         setIncluded(included);
         setOfferExtended(flightOffers[0]);
@@ -39,8 +39,11 @@ export default function FinaliseBooking() {
     }
   }, [null]);
 
-  if (!flightOfferExtended) return <Typography>""</Typography>;
-
+  if (!flightOfferExtended || !flightOffer)
+    return (
+      <Typography>No data/Expired data. Please make a new search</Typography>
+    );
+  console.log(`flightOff`, flightOffer);
   // if (!flightOfferExtended || !flightOffer) return <>Loading...</>;
   //console.log(`object`, travelerRequirements, included, flightOfferExtended);
   return (

@@ -48,6 +48,7 @@ export default function Airxplora() {
 
   // const [results, setResults] = useRecoilState(xpaOffers_);
   // console.log("?result", results);
+ // console.log(`flightOffers`, flightOffers)
 
   useEffect(() => {
     if (window !== "undefined" && !flightOffers) {
@@ -71,6 +72,8 @@ export default function Airxplora() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  
 
   return (
     <Box>
