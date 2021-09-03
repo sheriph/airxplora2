@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
@@ -42,6 +42,7 @@ export default function TripDetailHeader({
   flightOffer,
   travelerPricings,
   handleClose,
+  booked,
 }) {
   const classes = useStyles();
   const [expand, setExpand] = useState(false);
@@ -54,8 +55,9 @@ export default function TripDetailHeader({
     travelerRequirements_
   );
   const [included, setIncluded] = useRecoilState(included_);
-  const [flightOfferExtended, setOfferExtended] =
-    useRecoilState(flightOfferExtended_);
+  /*   const [flightOfferExtended, setOfferExtended] =
+    useRecoilState(flightOfferExtended_); */
+  const theme = useTheme();
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -70,7 +72,7 @@ export default function TripDetailHeader({
       console.log(`bookingRequirements`, bookingRequirements);
       setRequirements(bookingRequirements?.travelerRequirements);
       setIncluded(included);
-      setOfferExtended(flightOffers[0]);
+      //setOfferExtended(flightOffers[0]);
       //  setOffer(response);
       setTab("3");
       console.log(`response`, response);
@@ -105,9 +107,15 @@ export default function TripDetailHeader({
             alignItems="center"
             justifyContent="space-around"
           >
-            <Grid item xs={mini ? false : true} onClick={() => setOpen(false)}>
-              <ClearIcon />
-            </Grid>
+            {handleClose && (
+              <Grid
+                item
+                xs={mini ? false : true}
+                onClick={() => setOpen(false)}
+              >
+                <ClearIcon />
+              </Grid>
+            )}
             <Grid item xs>
               <Button
                 size="small"
@@ -124,9 +132,12 @@ export default function TripDetailHeader({
                 }
                 onClick={() => setExpand(!expand)}
               >
-                <span style={{ whiteSpace: "nowrap" }}>
+                <Typography
+                  component="span"
+                  style={{ whiteSpace: "nowrap", fontWeight: "bold" }}
+                >
                   {useMoney(grandTotal)}
-                </span>
+                </Typography>
               </Button>
             </Grid>
             <Grid item xs>
@@ -156,6 +167,33 @@ export default function TripDetailHeader({
                         <span>Please wait...</span>
                       </Grid>
                     )}
+                  </Grid>
+                </Box>
+              )}
+              {booked && (
+                <Box display="flex" justifyContent="flex-end">
+                  <Grid
+                    container
+                    justifyContent="flex-end"
+                    direction={isVerifying ? "column" : "row"}
+                  >
+                    <Grid item>
+                      <Typography display="block" variant="caption">
+                        Yet to pay ?
+                      </Typography>
+                      <Button
+                        disabled={isVerifying}
+                        endIcon={
+                          isVerifying ? <CircularProgress size="20px" /> : ""
+                        }
+                        onClick={null}
+                        variant="contained"
+                        color="primary"
+                        // size="small"
+                      >
+                        <span style={{ whiteSpace: "nowrap" }}>Pay Now</span>
+                      </Button>
+                    </Grid>
                   </Grid>
                 </Box>
               )}

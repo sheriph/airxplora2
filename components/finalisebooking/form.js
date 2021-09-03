@@ -26,8 +26,9 @@ import { first } from "lodash";
 import { useSnackbar } from "notistack";
 import { useRecoilState } from "recoil";
 import Loader from "../others/loader";
+import { order_, tab_, xpaDictionary_ } from "../../lib/state";
 
-export default function Form({ flightOfferExtended, travelerRequirements }) {
+export default function Form({ flightOffer, travelerRequirements }) {
   const {
     register,
     handleSubmit,
@@ -40,6 +41,9 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [isloading, setLoading] = useState(false);
+  const [order, setOrder] = useRecoilState(order_);
+  const [tab, setTab] = useRecoilState(tab_);
+  const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
 
   const onSubmit = async (data) => {
     console.log(
@@ -58,7 +62,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
         return;
       }
     }
-    console.log(`flightOfferExtended`, flightOfferExtended);
+    console.log(`flightOffer`, flightOffer);
     const pickItem = (identifier, travelerId) => {
       if (!identifier) return "";
       return first(
@@ -74,7 +78,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
 
     console.log(`pickItem`, pickItem("nationality", "1"));
 
-    const travelers = flightOfferExtended.travelerPricings.map((traveler) => {
+    const travelers = flightOffer.travelerPricings.map((traveler) => {
       return {
         id: traveler.travelerId,
         name: {
@@ -172,7 +176,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
     const flightOrder = {
       data: {
         type: "flight-order",
-        flightOffers: [flightOfferExtended],
+        flightOffers: [flightOffer],
         travelers: travelers,
         remarks: remarks,
         ticketingAgreement: ticketingAgreement,
@@ -196,13 +200,21 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
       setLoading(true);
       const response = await axiosAirxplora(config, 2);
       console.log(`response`, response);
+      setOrder(response.data.data);
+      setLoading(false);
+      const state = {
+        id: response.data.data.id,
+        dictionary: dictionary,
+        flightOffer: flightOffer,
+      };
+      console.log(`state`, state);
+      setTab("4");
     } catch (error) {
       console.log(`error`, error);
       enqueueSnackbar(<Box>{error.message}</Box>, {
         variant: "error",
         anchorOrigin: { horizontal: "right", vertical: "top" },
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -224,7 +236,7 @@ export default function Form({ flightOfferExtended, travelerRequirements }) {
               Passenger Details
             </Typography>
           </Grid>
-          {flightOfferExtended.travelerPricings.map((traveler, index) => {
+          {flightOffer.travelerPricings.map((traveler, index) => {
             let requirements;
             [requirements] = travelerRequirements
               ? travelerRequirements?.filter(

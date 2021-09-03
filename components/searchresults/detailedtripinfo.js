@@ -1,4 +1,4 @@
-import { Box } from "@material-ui/core";
+import { Box, useTheme } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import TripDetailHeader from "./tripdetailheader";
 import TripStop from "./tripstop";
@@ -16,23 +16,34 @@ import {
   getLayover,
 } from "../../lib/utilities";
 import duration from "dayjs/plugin/duration";
-import { lowerCase, startCase } from "lodash";
 import { flightOfferExtended_ } from "../../lib/state";
 import { useRecoilState } from "recoil";
+import { Paper } from "@material-ui/core";
+import NameTable from "../others/nametable";
+import BookedTable from "../others/bookedtable";
+import { Container } from "@material-ui/core";
+import { Alert } from "@material-ui/lab";
 
 export default function DetailedTripInfo({
   flightOffer,
   dictionary,
   handleClose,
+  booked,
+  flightOrder,
+  ticketingAgreement,
+  travelers,
+  associatedRecords,
+  contacts,
 }) {
   if (!flightOffer) return <>...</>;
   const [cookies, setCookie] = useCookies(["xpaformData", "xpaMultiTrip"]);
   console.log(`cookies`, cookies.xpaformData);
   const tripType = cookies?.xpaformData?.tripType;
   console.log(`flightOffer`, flightOffer, dictionary);
+  const theme = useTheme();
   dayjs.extend(duration);
-  const [flightOfferExtended, setOfferExtended] =
-    useRecoilState(flightOfferExtended_);
+  /*   const [flightOfferExtended, setOfferExtended] =
+    useRecoilState(flightOfferExtended_); */
 
   const { aircraft, carriers } = dictionary;
 
@@ -46,13 +57,42 @@ export default function DetailedTripInfo({
 
   useEffect(() => {}, [null]);
   return (
-    <Grid container>
+    <Grid container spacing={booked && flightOrder ? 2 : 0}>
+      {booked && flightOrder && (
+        <Grid item xs={12}>
+          <Paper
+            style={{
+              backgroundColor: theme.palette.primary.main,
+            }}
+          >
+            <Container>
+              <Grid
+                container
+                alignContent="center"
+                alignItems="flex-start"
+                justifyContent="space-between"
+              >
+                <Grid item>
+                  <NameTable travelers={travelers} />
+                </Grid>
+                <Grid item>
+                  <BookedTable
+                    associatedRecords={associatedRecords}
+                    contacts={contacts}
+                  />
+                </Grid>
+              </Grid>
+            </Container>
+          </Paper>
+        </Grid>
+      )}
       <Grid item xs={12}>
         <TripDetailHeader
           grandTotal={grandTotal}
           flightOffer={flightOffer}
           travelerPricings={travelerPricings}
           handleClose={handleClose}
+          booked={booked}
         />
       </Grid>
       {flightOffer.itineraries.map((itinerary, itineraryIndex, itineraries) => {
@@ -89,17 +129,6 @@ export default function DetailedTripInfo({
                                 {getAirportName(from, "cityName")} -{" "}
                                 {getAirportName(to, "cityName")}
                               </Typography>
-                              {/* <Typography>
-                                {startCase(
-                                  lowerCase(
-                                    `${getAirportName(from, "cityName")}`
-                                  )
-                                )}
-                                {" - "}
-                                {startCase(
-                                  lowerCase(`${getAirportName(to, "cityName")}`)
-                                )}
-                              </Typography> */}
                             </Grid>
                           </Grid>
                         </Grid>
@@ -126,10 +155,9 @@ export default function DetailedTripInfo({
                     <Box pt={1} pb={3}>
                       <TripStop
                         baggage={getBaggage(
-                          flightOfferExtended,
+                          flightOffer,
                           segment.id,
-                          flightOfferExtended?.pricingOptions
-                            ?.includedCheckedBagsOnly
+                          flightOffer?.pricingOptions?.includedCheckedBagsOnly
                         )}
                         // firstLeg={segmentIndex === 0 ? true : false}
                         lastLeg={

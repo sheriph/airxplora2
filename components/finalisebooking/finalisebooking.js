@@ -22,8 +22,8 @@ export default function FinaliseBooking() {
   const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
   const [dictionaries, setDictionary] = useRecoilState(xpaDictionary_);
   const [flightOffer, setOffer] = useRecoilState(flightOffer_);
-  const [flightOfferExtended, setOfferExtended] =
-    useRecoilState(flightOfferExtended_);
+  /*  const [flightOfferExtended, setOfferExtended] =
+    useRecoilState(flightOfferExtended_); */
 
   useEffect(() => {
     if (window !== undefined) {
@@ -34,16 +34,16 @@ export default function FinaliseBooking() {
         //  console.log(`bookingRequirements`, bookingRequirements);
         setRequirements(bookingRequirements?.travelerRequirements);
         setIncluded(included);
-        setOfferExtended(flightOffers[0]);
+        // setOfferExtended(flightOffers[0]);
       }
     }
   }, [null]);
 
-  if (!flightOfferExtended || !flightOffer)
+  if (!flightOffer)
     return (
       <Typography>No data/Expired data. Please make a new search</Typography>
     );
-  console.log(`flightOff`, flightOffer);
+  console.log(`flightOff`, flightOffer, dictionaries);
   // if (!flightOfferExtended || !flightOffer) return <>Loading...</>;
   //console.log(`object`, travelerRequirements, included, flightOfferExtended);
   return (
@@ -58,7 +58,7 @@ export default function FinaliseBooking() {
       <Grid item xs={12}>
         <Form
           travelerRequirements={travelerRequirements}
-          flightOfferExtended={flightOfferExtended}
+          flightOffer={flightOffer}
         />
       </Grid>
     </Grid>

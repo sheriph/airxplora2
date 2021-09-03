@@ -11,6 +11,7 @@ import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 import BookingForm from "../components/bookingform/bookingForm";
 import ResultPage from "../components/searchresults/resultpage";
 import MyDrawer from "../components/others/drawer";
+import FindInPageIcon from "@material-ui/icons/FindInPage";
 import { useRecoilState } from "recoil";
 import {
   flightOffer_,
@@ -23,6 +24,7 @@ import {
 } from "../lib/state";
 import FinaliseBooking from "../components/finalisebooking/finalisebooking";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
+import MyBooking from "../components/mybooking/mybooking";
 
 const useStyles = makeStyles({
   root: {
@@ -48,7 +50,7 @@ export default function Airxplora() {
 
   // const [results, setResults] = useRecoilState(xpaOffers_);
   // console.log("?result", results);
- // console.log(`flightOffers`, flightOffers)
+  // console.log(`flightOffers`, flightOffers)
 
   useEffect(() => {
     if (window !== "undefined" && !flightOffers) {
@@ -67,21 +69,25 @@ export default function Airxplora() {
     }
   }, [null]);
 
- // console.log(`index flightOffers`, flightOffers);
+  // console.log(`index flightOffers`, flightOffers);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  
-
   return (
     <Box>
       <MyDrawer handleClose={handleClose} open={open}>
         <DetailedTripInfo
+          ticketingAgreement={null}
+          associatedRecords={null}
+          travelers={null}
+          contacts={null}
           dictionary={dictionary}
           flightOffer={flightOfferState}
           handleClose={handleClose}
+          flightOrder={null}
+          booked={false}
         />
       </MyDrawer>
       <TabContext value={tab}>
@@ -102,6 +108,11 @@ export default function Airxplora() {
               label="Book"
               value="3"
             />
+            <Tab
+              icon={<FindInPageIcon fontSize="small" />}
+              label="MY BOOKING"
+              value="4"
+            />
           </TabList>
         </AppBar>
         <TabPanel value="1">
@@ -116,6 +127,9 @@ export default function Airxplora() {
         </TabPanel>
         <TabPanel value="3">
           <FinaliseBooking />
+        </TabPanel>
+        <TabPanel value="4">
+          <MyBooking />
         </TabPanel>
       </TabContext>
     </Box>

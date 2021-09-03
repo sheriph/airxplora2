@@ -20,7 +20,7 @@ export default function ResultPage({ flightOffers, carriers, dictionary }) {
   const handleClose = () => {
     setOpen(false);
   };
-
+  console.log(`flightOffers`, flightOffers)
   return (
     <Box>
       <MyDrawer

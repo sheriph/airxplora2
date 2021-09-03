@@ -1,17 +1,27 @@
-import { Grid, Typography } from "@material-ui/core";
+import { Box, Grid, Typography } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import { lowerCase, startCase } from "lodash";
-import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
+import { useRecoilState } from "recoil";
+import { flightOffer_, order_, xpaDictionary_ } from "../../lib/state";
+import DetailedTripInfo from "../searchresults/detailedtripinfo";
 
-export default function BookingConfirmation() {
-  const records = flightOrder?.data?.associatedRecords;
+export default function MyBooking() {
+  // const records = flightOrder?.data?.associatedRecords;
+  const [order, setOrder] = useRecoilState(order_);
+  const [flightOffer, setOffer] = useRecoilState(flightOffer_);
+  const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
+
+  if (!order) return <Typography>Loading...</Typography>;
+
+  const { associatedRecords, contacts, ticketingAgreement, travelers } = order;
 
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
-        <Typography gutterBottom align="center" variant="h4">
+        <Typography gutterBottom align="center" variant="h5">
           Booking Confirmation
         </Typography>
-        {records.map((record, index) => (
+        {associatedRecords.map((record, index) => (
           <Typography key={index} align="center">
             {record.originSystemCode === "GDS"
               ? `Amadeus Reference`
@@ -21,9 +31,33 @@ export default function BookingConfirmation() {
             : {record.reference}
           </Typography>
         ))}
+        <Box>
+          <Alert
+            severity={
+              ticketingAgreement.option === "CONFIRM" ? "success" : "warning"
+            }
+          >
+            <AlertTitle>Status</AlertTitle>
+            {ticketingAgreement.option === "CONFIRM" ? (
+              "Confirmed Booking! This ticket is valid for travel"
+            ) : (
+              <span>
+                Temporary Reservation (Please make payment soon to avoid
+                cancelation) <br />
+                For Bank Transfer: 0124782296 : Gtbank : NaijaGoingAbroad LTD{" "}
+                <br />
+                For Onlint Payment, please click PAY NOW button below
+              </span>
+            )}
+          </Alert>
+        </Box>
       </Grid>
       <Grid item xs={12}>
         <DetailedTripInfo
+          ticketingAgreement={ticketingAgreement}
+          associatedRecords={associatedRecords}
+          travelers={travelers}
+          contacts={contacts}
           dictionary={dictionary}
           flightOffer={flightOffer}
           handleClose={null}
