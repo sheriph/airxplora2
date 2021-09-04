@@ -66,14 +66,15 @@ export default function TripDetailHeader({
       setIsVerifying(true);
       const response = await verifyPrice(flightOffer);
       setIsVerifying(false);
-      window.localStorage.setItem("xpaBookingOffer", JSON.stringify(response));
+      window.sessionStorage.setItem(
+        "xpaBookingOffer",
+        JSON.stringify(response)
+      );
       const { data, included } = response;
       const { flightOffers, bookingRequirements } = data;
       console.log(`bookingRequirements`, bookingRequirements);
       setRequirements(bookingRequirements?.travelerRequirements);
       setIncluded(included);
-      //setOfferExtended(flightOffers[0]);
-      //  setOffer(response);
       setTab("3");
       console.log(`response`, response);
       handleClose();

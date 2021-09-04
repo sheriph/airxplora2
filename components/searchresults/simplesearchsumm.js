@@ -52,7 +52,7 @@ export default function SimpleSearchSummary({ flightOffers }) {
     if (passengers) {
       setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
     }
-    if (window !== "undefined") {
+    if (window !== undefined) {
       // const results = window.localStorage.getItem("xpaOffers");
       if (!flightOffers) {
         setTimeout(() => {

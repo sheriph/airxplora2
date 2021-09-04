@@ -186,7 +186,7 @@ export default function BookingForm({ square = false }) {
       setOffers(data);
       setOffersFixed(data);
       setCarriers(carriers);
-      window.localStorage.setItem("xpaOffers", JSON.stringify(response));
+      window.sessionStorage.setItem("xpaOffers", JSON.stringify(response));
       setLoading(false);
       setDefaultExpanded(false);
       setTab("2");

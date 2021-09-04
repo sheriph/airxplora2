@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { uniqueId } from "lodash";
 const uri = process.env.MONGODB_URI;
 const options = {
   useUnifiedTopology: true,
@@ -8,18 +9,15 @@ const options = {
 const client = new MongoClient(uri, options);
 
 export default async function handler(req, res) {
-  console.log(`running mongodb`);
+  const { data, db, col } = req.body;
+  console.log(`data`, data, db, col);
   try {
     await client.connect();
-
-    const database = client.db("sample_mflix");
-    console.log(`database`, database);
-    const movies = database.collection("movies");
-    // Query for a movie that has the title 'Back to the Future'
-    const query = { title: "Back to the Future" };
-    const movie = await movies.findOne(query);
-    console.log(movie);
-    res.status(200).json(movie);
+    const database = client.db(db);
+    const flight_order = database.collection(col);
+    const result = await flight_order.insertOne(data);
+    res.status(200).json(result);
+    console.log(`A document was inserted with the _id: ${result.insertedId}`);
   } catch (err) {
     // Ensures that the client will close when you finish/error
     console.log(`err`, err);
@@ -27,5 +25,4 @@ export default async function handler(req, res) {
     console.log(`closing connection`);
     await client.close();
   }
-  //  run().catch(console.dir);
 }

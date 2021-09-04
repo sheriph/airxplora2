@@ -53,8 +53,8 @@ export default function Airxplora() {
   // console.log(`flightOffers`, flightOffers)
 
   useEffect(() => {
-    if (window !== "undefined" && !flightOffers) {
-      const results = window.localStorage.getItem("xpaOffers");
+    if (window !== undefined && !flightOffers) {
+      const results = window.sessionStorage.getItem("xpaOffers");
       if (results) {
         const {
           data,
@@ -86,7 +86,6 @@ export default function Airxplora() {
           dictionary={dictionary}
           flightOffer={flightOfferState}
           handleClose={handleClose}
-          flightOrder={null}
           booked={false}
         />
       </MyDrawer>

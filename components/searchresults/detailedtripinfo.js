@@ -29,7 +29,6 @@ export default function DetailedTripInfo({
   dictionary,
   handleClose,
   booked,
-  flightOrder,
   ticketingAgreement,
   travelers,
   associatedRecords,
@@ -57,8 +56,8 @@ export default function DetailedTripInfo({
 
   useEffect(() => {}, [null]);
   return (
-    <Grid container spacing={booked && flightOrder ? 2 : 0}>
-      {booked && flightOrder && (
+    <Grid container spacing={booked ? 2 : 0}>
+      {booked && (
         <Grid item xs={12}>
           <Paper
             style={{

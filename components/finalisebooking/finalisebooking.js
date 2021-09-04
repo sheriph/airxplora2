@@ -22,12 +22,11 @@ export default function FinaliseBooking() {
   const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
   const [dictionaries, setDictionary] = useRecoilState(xpaDictionary_);
   const [flightOffer, setOffer] = useRecoilState(flightOffer_);
-  /*  const [flightOfferExtended, setOfferExtended] =
-    useRecoilState(flightOfferExtended_); */
+
 
   useEffect(() => {
     if (window !== undefined) {
-      const response = window.localStorage.getItem("xpaBookingOffer");
+      const response = window.sessionStorage.getItem("xpaBookingOffer");
       if (response) {
         const { data, included } = JSON.parse(response);
         const { flightOffers, bookingRequirements } = data;

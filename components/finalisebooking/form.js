@@ -18,7 +18,7 @@ import { Autocomplete } from "@material-ui/lab";
 import { countries } from "./country";
 import DateSelector from "./dateselector";
 import dayjs from "dayjs";
-import { axiosAirxplora, schema } from "../../lib/utilities";
+import { axiosAirxplora, schema, updateDb } from "../../lib/utilities";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { pickBy } from "lodash";
 import { values } from "lodash";
@@ -62,7 +62,6 @@ export default function Form({ flightOffer, travelerRequirements }) {
         return;
       }
     }
-    console.log(`flightOffer`, flightOffer);
     const pickItem = (identifier, travelerId) => {
       if (!identifier) return "";
       return first(
@@ -82,8 +81,14 @@ export default function Form({ flightOffer, travelerRequirements }) {
       return {
         id: traveler.travelerId,
         name: {
-          firstName: pickItem("othernames", traveler.travelerId),
-          lastName: pickItem("surname", traveler.travelerId),
+          firstName: pickItem(
+            "othernames",
+            traveler.travelerId
+          ).toLocaleUpperCase(),
+          lastName: pickItem(
+            "surname",
+            traveler.travelerId
+          ).toLocaleUpperCase(),
         },
         gender:
           pickItem("gender", traveler.travelerId) === "Mr" ? "MALE" : "FEMALE",
@@ -201,13 +206,27 @@ export default function Form({ flightOffer, travelerRequirements }) {
       const response = await axiosAirxplora(config, 2);
       console.log(`response`, response);
       setOrder(response.data.data);
-      setLoading(false);
+
       const state = {
         id: response.data.data.id,
         dictionary: dictionary,
         flightOffer: flightOffer,
+        associatedRecords: response.data.data.associatedRecords,
+        travelers: response.data.data.travelers,
       };
-      console.log(`state`, state);
+
+      try {
+        const response2 = await updateDb(
+          state,
+          "airxplora_bookings",
+          "flight_order"
+        );
+        console.log(`database update`, response2);
+      } catch (error) {
+        console.log(`error`, error);
+      }
+      setLoading(false);
+      // console.log(`state`, state);
       setTab("4");
     } catch (error) {
       console.log(`error`, error);
@@ -262,33 +281,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <Typography color="primary" variant="h6" align="center">
-                      <span>
-                        {!watch(`surname-${traveler.travelerType}-${index}`) &&
-                          !watch(
-                            `othernames-${traveler.travelerType}-${index}`
-                          ) &&
-                          "Traveler 1"}
-                      </span>
-                      <span>
-                        {startCase(
-                          lowerCase(
-                            watch(`surname-${traveler.travelerType}-${index}`)
-                          )
-                        )}
-                      </span>
-                      <span>
-                        {watch(`surname-${traveler.travelerType}-${index}`) &&
-                          " / "}
-                      </span>
-                      <span>
-                        {startCase(
-                          lowerCase(
-                            watch(
-                              `othernames-${traveler.travelerType}-${index}`
-                            )
-                          )
-                        )}
-                      </span>
+                      <span>{`Traveler ${index + 1}`}</span>
                       &nbsp;
                       <span>
                         ({startCase(lowerCase(traveler.travelerType))})
