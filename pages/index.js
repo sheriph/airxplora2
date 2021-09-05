@@ -98,11 +98,13 @@ export default function Airxplora() {
               value="1"
             />
             <Tab
+              disabled={!flightOffers ? true : false}
               icon={<PlaylistAddCheckIcon fontSize="small" />}
               label="Select"
               value="2"
             />
             <Tab
+              disabled={!flightOffers ? true : false}
               icon={<AccountCircleIcon fontSize="small" />}
               label="Book"
               value="3"
@@ -134,3 +136,5 @@ export default function Airxplora() {
     </Box>
   );
 }
+
+

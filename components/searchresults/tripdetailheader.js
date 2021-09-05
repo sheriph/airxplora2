@@ -79,7 +79,7 @@ export default function TripDetailHeader({
       console.log(`response`, response);
       handleClose();
     } catch (error) {
-      console.log(`error`, error);
+      console.log(`fare pricing error`, error);
       enqueueSnackbar(
         "Seems like the seat has just been sold, please search again to verify available and book again",
         {

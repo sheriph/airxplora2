@@ -17,6 +17,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import { useState } from "react";
 import Loader from "../others/loader";
 import { axiosAirxplora, getMoreOrderData } from "../../lib/utilities";
+import { useSnackbar } from "notistack";
+import CustomizedDialogs from "../others/dialog";
 
 export default function MyBooking() {
   const [order, setOrder] = useRecoilState(order_);
@@ -24,6 +26,8 @@ export default function MyBooking() {
   const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
   const [isLoading, setLoading] = useState(false);
   const { handleSubmit, control } = useForm();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [open, setOpen] = useState(false);
 
   const onSubmit = async (data) => {
     //eJzTd9f3cg%2F18HEBAAtYAmQ%3D
@@ -53,7 +57,8 @@ export default function MyBooking() {
       setDictionary(dictionary);
       setOrder(orderResponse.data.data);
     } catch (error) {
-      console.log(`error`, error);
+      console.log(`booking retrieval error`, error);
+      setOpen(true);
     } finally {
       setLoading(false);
     }
@@ -63,6 +68,26 @@ export default function MyBooking() {
     return (
       <Paper component="form" onSubmit={handleSubmit(onSubmit)}>
         <Loader open={isLoading} />
+        <CustomizedDialogs
+          handleClose={() => setOpen(false)}
+          open={open}
+          title="Record Not Found"
+        >
+          <Typography gutterBottom>
+            Sorry we could not find this booking ---
+          </Typography>
+          <Typography gutterBottom>
+            This could mean any of the following
+          </Typography>
+          <Typography gutterBottom>
+            Invalid Booking Reference and or surname
+          </Typography>
+          <Typography gutterBottom>
+            Canceled Booking: Airline have rights to cancel unpaid bookings and
+            this might just mean that you need to rebook another flight
+          </Typography>
+          <Typography gutterBottom>Network issue: You can try again</Typography>
+        </CustomizedDialogs>
         <Grid component={Container} spacing={2} container>
           <Grid item xs={12}>
             <Typography align="center">Check Your Booking</Typography>

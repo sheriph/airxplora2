@@ -4,7 +4,7 @@ import { Container } from "@material-ui/core";
 import { Paper } from "@material-ui/core";
 import { Grid } from "@material-ui/core";
 import dayjs from "dayjs";
-import { lowerCase, startCase, truncate } from "lodash";
+import { lowerCase, startCase, truncate, uniqBy } from "lodash";
 import { useEffect, useState } from "react";
 import { getCabin, useMoney } from "../../lib/utilities";
 import OneStop from "./onestop";
@@ -13,7 +13,8 @@ import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MyDrawer from "../others/drawer";
 import DetailedTripInfo from "./detailedtripinfo";
 import { useRecoilState } from "recoil";
-import { flightOffer_, openDrawer_ } from "../../lib/state";
+import { flightOffer_, included_, openDrawer_, tab_ } from "../../lib/state";
+import CustomizedDialogs from "../others/dialog";
 
 export default function TripCard({ flightOffer, carriers, dictionaries }) {
   const tab = useMediaQuery("(max-width:960px)");
@@ -23,12 +24,64 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
     travelerPricings: [firstTraveller, ...rest],
   } = flightOffer;
   const { fareDetailsBySegment } = firstTraveller;
- // console.log(`flightOffer`, flightOffer);
+  // console.log(`flightOffer`, flightOffer);
   const [flightOfferState, setFlightOffer] = useRecoilState(flightOffer_);
   const [open, setOpen] = useRecoilState(openDrawer_);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [included, setIncluded] = useRecoilState(included_);
+  const [activeTab, setTab] = useRecoilState(tab_);
+
+  let dialogText;
+
+  try {
+    let fareRules = uniqBy(
+      Object.values(included["detailed-fare-rules"]),
+      (value) => value.fareBasis
+    );
+    dialogText = fareRules.map((item, index) => ({
+      ...item,
+      fareNotes: item.fareNotes.descriptions.filter(
+        (des) => des.descriptionType === "PENALTIES"
+      ),
+    }));
+  } catch (error) {
+    console.log(`fare rules error`, error);
+  }
 
   return (
     <>
+      <CustomizedDialogs
+        handleClose={() => setOpenDialog(false)}
+        open={openDialog}
+        title="Ticket Rules"
+      >
+        {dialogText && (
+          <Box>
+            {dialogText.map((rules, index) => (
+              <div key={index}>
+                <Grid container spacing={3}>
+                  <Grid item>Fare Code: {rules?.fareBasis} </Grid>
+                  <Grid item>Name: {startCase(lowerCase(rules?.name))} </Grid>
+                  <Grid item container>
+                    {rules?.fareNotes && (
+                      <div>
+                        {rules?.fareNotes.map((note, index) => (
+                          <Typography
+                            style={{ whiteSpace: "pre-wrap" }}
+                            key={index}
+                          >
+                            {note?.text}
+                          </Typography>
+                        ))}
+                      </div>
+                    )}
+                  </Grid>
+                </Grid>
+              </div>
+            ))}
+          </Box>
+        )}
+      </CustomizedDialogs>
       <Container
         style={{ display: "flex", paddingTop: "10px" }}
         component={Paper}
@@ -41,7 +94,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
         >
           <Grid item xs>
             {itineraries.map((itinerary, index) => {
-            //  console.log("itinerary", itinerary);
+              //  console.log("itinerary", itinerary);
               const { segments } = itinerary;
               const { duration } = itinerary;
               const firstSegment = segments[0];
@@ -54,7 +107,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
               const arrivalTime = dayjs(arrival.at).format("h:ma");
               const departureAirport = departure.iataCode;
               const arrivalAirport = arrival.iataCode;
-            //  console.log(departure, arrival);
+              //  console.log(departure, arrival);
               const stop = segments.length - 1;
               const stopOver = stop === 0 ? "Direct" : `${stop} Stop`;
               return (
@@ -122,15 +175,52 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
                     </Button>
                   </Box>
                 </Grid>
+                {dialogText && activeTab === "3" && (
+                  <Grid item>
+                    <Box my={1}>
+                      <Button
+                        endIcon={<OpenInNewIcon />}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => setOpenDialog(true)}
+                      >
+                        Rules
+                      </Button>
+                    </Box>
+                  </Grid>
+                )}
               </Grid>
             </Grid>
           </Hidden>
           <Hidden mdUp>
             <Grid item xs={12}>
-              <Grid container justifyContent="space-between">
+              <Grid
+                container
+                alignContent="center"
+                alignItems="center"
+                justifyContent="space-between"
+              >
                 <Grid item>
-                  <Typography>{useMoney(grandTotal)}</Typography>
+                  <Box mb={1}>
+                    <Typography>{useMoney(grandTotal)}</Typography>
+                  </Box>
                 </Grid>
+                {dialogText && activeTab === "3" && (
+                  <Grid item>
+                    <Box mb={1}>
+                      <Button
+                        endIcon={<OpenInNewIcon />}
+                        size="small"
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => setOpenDialog(true)}
+                      >
+                        Rules
+                      </Button>
+                    </Box>
+                  </Grid>
+                )}
                 <Grid item>
                   <Box mb={1}>
                     <Button
