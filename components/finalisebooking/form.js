@@ -20,9 +20,7 @@ import DateSelector from "./dateselector";
 import dayjs from "dayjs";
 import { axiosAirxplora, schema, updateDb } from "../../lib/utilities";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { pickBy } from "lodash";
-import { values } from "lodash";
-import { first } from "lodash";
+import { pickBy, trim, values, first } from "lodash";
 import { useSnackbar } from "notistack";
 import { useRecoilState } from "recoil";
 import Loader from "../others/loader";
@@ -81,14 +79,12 @@ export default function Form({ flightOffer, travelerRequirements }) {
       return {
         id: traveler.travelerId,
         name: {
-          firstName: pickItem(
-            "othernames",
-            traveler.travelerId
-          ).toLocaleUpperCase(),
-          lastName: pickItem(
-            "surname",
-            traveler.travelerId
-          ).toLocaleUpperCase(),
+          firstName: trim(
+            pickItem("othernames", traveler.travelerId).toLocaleUpperCase()
+          ),
+          lastName: trim(
+            pickItem("surname", traveler.travelerId).toLocaleUpperCase()
+          ),
         },
         gender:
           pickItem("gender", traveler.travelerId) === "Mr" ? "MALE" : "FEMALE",

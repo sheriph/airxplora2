@@ -8,7 +8,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Alert, AlertTitle } from "@material-ui/lab";
-import { lowerCase, startCase } from "lodash";
+import { lowerCase, startCase, trim } from "lodash";
 import { Controller, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { flightOffer_, order_, xpaDictionary_ } from "../../lib/state";
@@ -37,8 +37,8 @@ export default function MyBooking() {
     try {
       setLoading(true);
       const response = await getMoreOrderData(
-        surname.toLocaleUpperCase(),
-        reference.toLocaleUpperCase()
+        trim(surname.toLocaleUpperCase()),
+        trim(reference.toLocaleUpperCase())
       );
       console.log(`response`, response);
       const { id, dictionary, flightOffer } = response.data;
