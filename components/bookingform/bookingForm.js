@@ -43,6 +43,7 @@ import {
 } from "../../lib/utilities";
 import Loader from "../others/loader";
 import { useCookies } from "react-cookie";
+import { useSnackbar } from "notistack";
 
 const styles = makeStyles((theme) => ({
   paperRoot: { padding: theme.spacing(2) },
@@ -60,7 +61,7 @@ export default function BookingForm({ square = false }) {
   const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
   const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
   const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
-
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [defaultExpanded, setDefaultExpanded] =
     useRecoilState(defaultExpanded_);
 
@@ -192,6 +193,10 @@ export default function BookingForm({ square = false }) {
       setTab("2");
     } catch (error) {
       console.log("error", error);
+      enqueueSnackbar(`${error.message}`, {
+        variant: "error",
+        anchorOrigin: { horizontal: "right", vertical: "top" },
+      });
       setLoading(false);
     }
   };

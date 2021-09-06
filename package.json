@@ -29,7 +29,6 @@
     "serverless-mysql": "^1.5.4",
     "styled-components": "^5.3.0",
     "swr": "^0.5.6",
-    "underscore": "^1.13.1",
     "use-deep-compare-effect": "^1.6.1",
     "yup": "^0.32.9"
   },

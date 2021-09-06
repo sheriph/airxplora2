@@ -48,7 +48,7 @@ export default function SimpleSearchSummary({ flightOffers }) {
       setEnd(arr[arr.length - 1]);
     }
     const passengers = cookies.xpaformData?.passengers;
-   // console.log(`arr`, arr, passengers);
+    console.log(`arr`, arr, passengers);
     if (passengers) {
       setTraveller(passengers.map((a) => a.count).reduce((a, b) => a + b, 0));
     }

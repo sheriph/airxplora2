@@ -104,7 +104,7 @@ export default function Airxplora() {
               value="2"
             />
             <Tab
-              disabled={!flightOffers ? true : false}
+              disabled={!flightOfferState ? true : false}
               icon={<AccountCircleIcon fontSize="small" />}
               label="Book"
               value="3"

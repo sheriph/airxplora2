@@ -17,7 +17,9 @@ import { Box } from "@material-ui/core";
 import PriceTable from "./pricetable";
 import { useMoney, verifyPrice } from "../../lib/utilities";
 import {
+  fareDifference_,
   flightOfferExtended_,
+  flightOffer_,
   included_,
   openDrawer_,
   tab_,
@@ -26,6 +28,7 @@ import {
 } from "../../lib/state";
 import { useRecoilState } from "recoil";
 import { useSnackbar } from "notistack";
+import { first } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,8 +61,10 @@ export default function TripDetailHeader({
   /*   const [flightOfferExtended, setOfferExtended] =
     useRecoilState(flightOfferExtended_); */
   const theme = useTheme();
+  const [flightOfferState, setFlightOffer] = useRecoilState(flightOffer_);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [fareDiff, setDiff] = useRecoilState(fareDifference_);
 
   const bookNow = async () => {
     try {
@@ -72,6 +77,15 @@ export default function TripDetailHeader({
       );
       const { data, included } = response;
       const { flightOffers, bookingRequirements } = data;
+      const floPriced = first(flightOffers);
+      const updatedOffer = {
+        ...floPriced,
+        itineraries: flightOffer.itineraries,
+      };
+      setFlightOffer(updatedOffer);
+      if (floPriced.price.grandTotal !== flightOffer.price.grandTotal) {
+        setDiff([flightOffer.price.grandTotal, floPriced.price.grandTotal]);
+      }
       console.log(`bookingRequirements`, bookingRequirements);
       setRequirements(bookingRequirements?.travelerRequirements);
       setIncluded(included);

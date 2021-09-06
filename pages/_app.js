@@ -6,7 +6,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
 import { RecoilRoot } from "recoil";
 import { CookiesProvider } from "react-cookie";
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from "notistack";
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
@@ -29,7 +29,10 @@ export default function MyApp(props) {
         />
       </Head>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider maxSnack={3}>
+        <SnackbarProvider
+          anchorOrigin={{ horizontal: "right", vertical: "top" }}
+          maxSnack={3}
+        >
           <CookiesProvider>
             <RecoilRoot>
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}

@@ -17,7 +17,7 @@ export default function SearchResult({ flightOffers, carriers, dictionary }) {
         <LazyLoad
           style={{ width: "100%", paddingBottom: "15px" }}
           key={index}
-          height={200}
+          height="100%"
         >
           <Grid item xs={12}>
             <TripCard
