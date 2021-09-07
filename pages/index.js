@@ -6,7 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import SearchIcon from "@material-ui/icons/Search";
 import PlaylistAddCheckIcon from "@material-ui/icons/PlaylistAddCheck";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import { AppBar, Box } from "@material-ui/core";
+import { AppBar, Box, Collapse } from "@material-ui/core";
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 import BookingForm from "../components/bookingform/bookingForm";
 import ResultPage from "../components/searchresults/resultpage";
@@ -48,10 +48,6 @@ export default function Airxplora() {
   const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
   const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
 
-  // const [results, setResults] = useRecoilState(xpaOffers_);
-  // console.log("?result", results);
-  // console.log(`flightOffers`, flightOffers)
-
   useEffect(() => {
     if (window !== undefined && !flightOffers) {
       const results = window.sessionStorage.getItem("xpaOffers");
@@ -91,30 +87,51 @@ export default function Airxplora() {
       </MyDrawer>
       <TabContext value={tab}>
         <AppBar position="static">
-          <TabList onChange={handleChange} aria-label="flight booking tab">
-            <Tab
-              icon={<SearchIcon fontSize="small" />}
-              label="Search"
-              value="1"
-            />
-            <Tab
-              disabled={!flightOffers ? true : false}
-              icon={<PlaylistAddCheckIcon fontSize="small" />}
-              label="Select"
-              value="2"
-            />
-            <Tab
-              disabled={!flightOfferState ? true : false}
-              icon={<AccountCircleIcon fontSize="small" />}
-              label="Book"
-              value="3"
-            />
-            <Tab
-              icon={<FindInPageIcon fontSize="small" />}
-              label="MY BOOKING"
-              value="4"
-            />
-          </TabList>
+          {tab === "3" ? (
+            <TabList onChange={handleChange} aria-label="flight booking tab">
+              <Tab
+                icon={<SearchIcon fontSize="small" />}
+                label="Search"
+                value="1"
+              />
+              <Tab
+                disabled={!flightOffers ? true : false}
+                icon={<PlaylistAddCheckIcon fontSize="small" />}
+                label="Select"
+                value="2"
+              />
+              <Tab
+                disabled
+                icon={<AccountCircleIcon fontSize="small" />}
+                label="Book"
+                value="3"
+              />
+              <Tab
+                icon={<FindInPageIcon fontSize="small" />}
+                label="MY BOOKING"
+                value="4"
+              />
+            </TabList>
+          ) : (
+            <TabList onChange={handleChange} aria-label="flight booking tab">
+              <Tab
+                icon={<SearchIcon fontSize="small" />}
+                label="Search"
+                value="1"
+              />
+              <Tab
+                disabled={!flightOffers ? true : false}
+                icon={<PlaylistAddCheckIcon fontSize="small" />}
+                label="Select"
+                value="2"
+              />
+              <Tab
+                icon={<FindInPageIcon fontSize="small" />}
+                label="MY BOOKING"
+                value="4"
+              />
+            </TabList>
+          )}
         </AppBar>
         <TabPanel value="1">
           <BookingForm />
@@ -136,5 +153,3 @@ export default function Airxplora() {
     </Box>
   );
 }
-
-
