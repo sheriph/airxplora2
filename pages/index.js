@@ -6,10 +6,10 @@ import Tab from "@material-ui/core/Tab";
 import SearchIcon from "@material-ui/icons/Search";
 import PlaylistAddCheckIcon from "@material-ui/icons/PlaylistAddCheck";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
-import { AppBar, Box, Collapse } from "@material-ui/core";
+import { AppBar, Box, Collapse, useMediaQuery } from "@material-ui/core";
 import { TabContext, TabList, TabPanel } from "@material-ui/lab";
 import BookingForm from "../components/bookingform/bookingForm";
-import ResultPage from "../components/searchresults/resultpage";
+import { ResultPage } from "../components/searchresults/resultpage";
 import MyDrawer from "../components/others/drawer";
 import FindInPageIcon from "@material-ui/icons/FindInPage";
 import { useRecoilState } from "recoil";
@@ -26,18 +26,21 @@ import FinaliseBooking from "../components/finalisebooking/finalisebooking";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
 import MyBooking from "../components/mybooking/mybooking";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     maxWidth: 500,
   },
-});
+  panelRoot: {
+    padding: theme.spacing(3),
+    [theme.breakpoints.down("xs")]: { padding: theme.spacing(1) },
+  },
+}));
 
 export default function Airxplora() {
   const classes = useStyles();
 
   const [tab, setTab] = useRecoilState(tab_);
-
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
@@ -47,7 +50,6 @@ export default function Airxplora() {
   const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
   const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
   const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
-
   useEffect(() => {
     if (window !== undefined && !flightOffers) {
       const results = window.sessionStorage.getItem("xpaOffers");
@@ -133,20 +135,20 @@ export default function Airxplora() {
             </TabList>
           )}
         </AppBar>
-        <TabPanel value="1">
+        <TabPanel classes={{ root: classes.panelRoot }} value="1">
           <BookingForm />
         </TabPanel>
-        <TabPanel value="2">
+        <TabPanel classes={{ root: classes.panelRoot }} value="2">
           <ResultPage
             flightOffers={flightOffers}
             carriers={carriers}
             dictionary={dictionary}
           />
         </TabPanel>
-        <TabPanel value="3">
+        <TabPanel classes={{ root: classes.panelRoot }} value="3">
           <FinaliseBooking />
         </TabPanel>
-        <TabPanel value="4">
+        <TabPanel classes={{ root: classes.panelRoot }} value="4">
           <MyBooking />
         </TabPanel>
       </TabContext>

@@ -180,7 +180,10 @@ export default function DetailedTripInfo({
                         cabin={getCabin(segment.id, fareDetailsBySegment)}
                         aircraftCode={aircraft[segment.aircraft.code]}
                         operatingCarrierCode={
-                          carriers[segment.operating.carrierCode]
+                          carriers[
+                            segment.operating?.carrierCode ||
+                              segment.carrierCode
+                          ]
                         }
                         layover={getLayover(segment, segments, segmentIndex)}
                         carrierCode={segment.carrierCode}

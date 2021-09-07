@@ -59,9 +59,6 @@ export default function FinaliseBooking() {
         setIncluded(included);
       } */
     }
-    return () => {
-      setOffer(null);
-    };
   }, [null]);
   console.log(`price1`, price1, price2);
   const notifyPriceChange = () => {

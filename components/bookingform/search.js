@@ -13,7 +13,7 @@ import FiberManualRecordOutlinedIcon from "@material-ui/icons/FiberManualRecordO
 import { useState } from "react";
 import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
 import FlightIcon from "@material-ui/icons/Flight";
-import { lowerCase, startCase, uniqueId } from "lodash";
+import { lowerCase, startCase, uniqueId, trim } from "lodash";
 import { getAirportSuggest } from "../../lib/utilities";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
@@ -50,23 +50,20 @@ export default function Search({
     console.log(`v`, v, r);
     if (r === "input") {
       const getSuggestions = async () => {
+        setLoading(true);
         try {
-          setLoading(true);
-          const option = await getAirportSuggest(v);
+          const option = await getAirportSuggest(trim(v));
           console.log("option :>> ", option);
-          if (isFrom) {
-            setFrom(option.data);
-            setLoading(false);
-          }
-          if (isTo) {
-            setTo(option.data);
-            setLoading(false);
-          }
+          if (isFrom) setFrom(option.data);
+
+          if (isTo) setTo(option.data);
         } catch (error) {
           console.log("error :>> ", error);
+        } finally {
+          setLoading(false);
         }
       };
-      getSuggestions();
+      if (v) getSuggestions();
     }
   };
 
@@ -84,7 +81,7 @@ export default function Search({
 
   return (
     <Autocomplete
-     // debug
+      // debug
       // disablePortal
       value={value}
       onChange={(e, v, r) => onChange(v)}

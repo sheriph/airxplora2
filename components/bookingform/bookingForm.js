@@ -62,6 +62,7 @@ export default function BookingForm({ square = false }) {
   const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
   const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const [count, setCount] = useState(1);
   const [defaultExpanded, setDefaultExpanded] =
     useRecoilState(defaultExpanded_);
 
@@ -93,7 +94,7 @@ export default function BookingForm({ square = false }) {
   }, [null]);
 
   const onSubmit = async (data) => {
-    console.log("submit data", data);
+    console.log("submit data", data, count);
     const { depDate, retDate, from, to, tripType, bookingClass, passengers } =
       data;
 
@@ -177,7 +178,7 @@ export default function BookingForm({ square = false }) {
     try {
       setLoading(true);
       const response = await getFlightOffers(postData);
-      console.log("response", response);
+      // console.log("response", response);
       const {
         data,
         dictionaries: { carriers },
@@ -198,6 +199,8 @@ export default function BookingForm({ square = false }) {
         anchorOrigin: { horizontal: "right", vertical: "top" },
       });
       setLoading(false);
+      setCount(count + 1);
+      if (count < 3) onSubmit(data);
     }
   };
 

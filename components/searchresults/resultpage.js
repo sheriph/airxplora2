@@ -1,7 +1,7 @@
 import { Box, Button, Grid, useMediaQuery, useTheme } from "@material-ui/core";
 import React, { useState } from "react";
 import Filter from "../filter/filter";
-import SearchResult from "./searchresult";
+import { SearchResult } from "./searchresult";
 import SearchSummary from "./searchsummary";
 import SimpleSearchSummary from "./simplesearchsumm";
 import StyledDate from "./styledate";
@@ -9,7 +9,7 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import MyDrawer from "../others/drawer";
 import { Typography } from "@material-ui/core";
 
-export default function ResultPage({ flightOffers, carriers, dictionary }) {
+export default function ResultPage_({ flightOffers, carriers, dictionary }) {
   if (!flightOffers)
     return (
       <Typography variant="h4">No Results, Please make a new search</Typography>
@@ -20,7 +20,7 @@ export default function ResultPage({ flightOffers, carriers, dictionary }) {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(`flightOffers`, flightOffers)
+ // console.log(`flightOffers`, flightOffers);
   return (
     <Box>
       <MyDrawer
@@ -67,3 +67,5 @@ export default function ResultPage({ flightOffers, carriers, dictionary }) {
     </Box>
   );
 }
+
+export const ResultPage = React.memo(ResultPage_);
