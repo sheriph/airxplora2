@@ -113,7 +113,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
               return (
                 <Grid container key={index}>
                   <Grid container spacing={tab ? 1 : 4}>
-                    <Grid item md={3}>
+                    <Grid item md={4}>
                       <Grid
                         container
                         alignContent="center"
@@ -131,7 +131,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
                           <Grid item>
                             {truncate(
                               startCase(lowerCase(carriers[carrierCode])),
-                              { length: 20 }
+                              { length: 15 }
                             )}
                           </Grid>
                         </Hidden>

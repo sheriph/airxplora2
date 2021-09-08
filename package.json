@@ -24,6 +24,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "latest",
     "react-hook-form": "^7.14.0",
+    "react-lazy-load-image-component": "^1.5.1",
     "react-lazyload": "^3.2.0",
     "recoil": "^0.3.1",
     "serverless-mysql": "^1.5.4",

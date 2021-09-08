@@ -4,9 +4,12 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import {
   Box,
   debounce,
+  Fab,
   Grid,
   makeStyles,
+  Paper,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@material-ui/core";
 import FiberManualRecordOutlinedIcon from "@material-ui/icons/FiberManualRecordOutlined";
@@ -16,6 +19,9 @@ import FlightIcon from "@material-ui/icons/Flight";
 import { lowerCase, startCase, uniqueId, trim } from "lodash";
 import { getAirportSuggest } from "../../lib/utilities";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import MyDrawer from "../others/drawer";
+import CancelIcon from "@material-ui/icons/Cancel";
+import CloseIcon from "@material-ui/icons/Close";
 
 const styles = makeStyles((theme) => ({
   inputRoot: {
@@ -27,6 +33,7 @@ const styles = makeStyles((theme) => ({
   },
   option: { padding: "0" },
   paper: { width: "280px" },
+  listbox: { padding: "0" },
 }));
 
 export default function Search({
@@ -45,6 +52,11 @@ export default function Search({
   const theme = useTheme();
   const [autoSelectFrom, setAutoSelectFrom] = useState(null);
   const [autoSelectTo, setAutoSelectTo] = useState(null);
+  const mobile = useMediaQuery("(max-width:600px)");
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const handleClose = () => {
+    setOpenDrawer(false);
+  };
 
   const onInputChange = (e, v, r) => {
     console.log(`v`, v, r);
@@ -80,94 +92,239 @@ export default function Search({
   }, []);
 
   return (
-    <Autocomplete
-      // debug
-      // disablePortal
-      value={value}
-      onChange={(e, v, r) => onChange(v)}
-      disableClearable
-      onInputChange={debouncedChangeHandler}
-      forcePopupIcon={false}
-      fullWidth
-      classes={{
-        inputRoot: classes.inputRoot,
-        option: classes.option,
-        //  paper: classes.paper,
-      }}
-      options={isFrom ? from : to}
-      // @ts-ignore
-      getOptionLabel={(option) =>
-        `${option.iataCode}, ${startCase(lowerCase(option.name))}`
-      }
-      renderOption={(option, state) => {
-        const {
-          name,
-          subType,
-          iataCode,
-          address: { cityName, countryName },
-        } = option;
-        return (
-          <Grid
-            container
-            alignContent="center"
-            alignItems="center"
-            justifyContent="flex-start"
-            className={state.selected ? classes.renderOption : ""}
-            style={{ padding: "16px" }}
-          >
-            <Grid item xs={2}>
-              {subType === "AIRPORT" ? (
-                <FlightIcon />
-              ) : (
-                <LocationOnOutlinedIcon />
-              )}
-            </Grid>
-            <Grid item xs={8}>
-              <Typography>
-                {startCase(lowerCase(name))}&nbsp;
-                {subType === "AIRPORT" &&
-                !name.toLocaleLowerCase().includes("airport")
-                  ? "Airport"
-                  : "Airports"}
-              </Typography>
-              <Typography variant="caption">
-                {startCase(lowerCase(cityName))},&nbsp;
-                {startCase(lowerCase(countryName))}
-              </Typography>
-            </Grid>
-            <Grid item xs={2}>
-              <Typography variant="h6">{iataCode}</Typography>
-            </Grid>
-          </Grid>
-        );
-      }}
-      renderInput={(params) => {
-        const updatedParams = {
-          ...params,
-          InputProps: {
-            ...params.InputProps,
-            endAdornment: <>{isLoading && <CircularProgress size="20px" />}</>,
-            startAdornment: (
-              <>
-                {isFrom ? (
-                  <FiberManualRecordOutlinedIcon />
-                ) : (
-                  <LocationOnOutlinedIcon />
-                )}
-              </>
-            ),
-          },
-        };
-        return (
-          <TextField
-            error={isError}
-            placeholder={placeHolder}
-            {...updatedParams}
-            variant="outlined"
+    <>
+      {mobile && (
+        <MyDrawer width="100%" handleClose={handleClose} open={openDrawer}>
+          <Autocomplete
+            debug
+            // disablePortal
+            value={value}
+            onChange={(e, v, r) => {
+              onChange(v);
+              if (r === "select-option")
+                setTimeout(() => setOpenDrawer(false), 250);
+            }}
+            disableClearable
+            onInputChange={debouncedChangeHandler}
+            forcePopupIcon={false}
+            fullWidth
+            classes={{
+              inputRoot: classes.inputRoot,
+              option: classes.option,
+              listbox: classes.listbox,
+              //  paper: classes.paper,
+            }}
+            options={isFrom ? from : to}
+            // @ts-ignore
+            getOptionLabel={(option) =>
+              `${option.iataCode}, ${startCase(lowerCase(option.name))}`
+            }
+            renderOption={(option, state) => {
+              const {
+                name,
+                subType,
+                iataCode,
+                address: { cityName, countryName },
+              } = option;
+              return (
+                <Grid
+                  container
+                  alignContent="center"
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  className={state.selected ? classes.renderOption : ""}
+                  style={{ padding: "10px" }}
+                  component={Paper}
+                  variant="outlined"
+                >
+                  <Grid item xs={2}>
+                    {subType === "AIRPORT" ? (
+                      <FlightIcon
+                        // @ts-ignore
+                        color={state.selected ? "initial" : "primary"}
+                        fontSize="small"
+                      />
+                    ) : (
+                      // @ts-ignore
+                      <LocationOnOutlinedIcon
+                        // @ts-ignore
+                        color={state.selected ? "initial" : "primary"}
+                        fontSize="small"
+                      />
+                    )}
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Typography variant="body2">
+                      {startCase(lowerCase(name))}&nbsp;
+                      {subType === "AIRPORT" &&
+                      !name.toLocaleLowerCase().includes("airport")
+                        ? "Airport"
+                        : "Airports"}
+                    </Typography>
+                    <Typography variant="caption">
+                      {startCase(lowerCase(cityName))},&nbsp;
+                      {startCase(lowerCase(countryName))}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={2}>
+                    <Typography color={state.selected ? "initial" : "primary"}>
+                      {iataCode}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              );
+            }}
+            renderInput={(params) => {
+              const updatedParams = {
+                ...params,
+                InputProps: {
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>{isLoading && <CircularProgress size="20px" />}</>
+                  ),
+                  startAdornment: (
+                    <>
+                      {isFrom ? (
+                        <FiberManualRecordOutlinedIcon />
+                      ) : (
+                        <LocationOnOutlinedIcon />
+                      )}
+                    </>
+                  ),
+                },
+              };
+              return (
+                <TextField
+                  error={isError}
+                  placeholder={placeHolder}
+                  {...updatedParams}
+                  variant="outlined"
+                />
+              );
+            }}
           />
-        );
-      }}
-    />
+          <Fab
+            style={{ position: "absolute", right: "10px", bottom: "10px" }}
+            color="primary"
+            aria-label="add"
+            onClick={() => setOpenDrawer(false)}
+          >
+            <CloseIcon />
+          </Fab>
+        </MyDrawer>
+      )}
+      <span
+        onClick={() => {
+          if (mobile) setOpenDrawer(true);
+        }}
+        style={{ width: "100%" }}
+      >
+        <Autocomplete
+          // debug
+          // disablePortal
+          value={value}
+          onChange={(e, v, r) => onChange(v)}
+          disableClearable
+          onInputChange={debouncedChangeHandler}
+          forcePopupIcon={false}
+          fullWidth
+          classes={{
+            inputRoot: classes.inputRoot,
+            option: classes.option,
+            listbox: classes.listbox,
+            //  paper: classes.paper,
+          }}
+          options={isFrom ? from : to}
+          // @ts-ignore
+          getOptionLabel={(option) =>
+            `${option.iataCode}, ${startCase(lowerCase(option.name))}`
+          }
+          renderOption={(option, state) => {
+            const {
+              name,
+              subType,
+              iataCode,
+              address: { cityName, countryName },
+            } = option;
+            return (
+              <Grid
+                container
+                alignContent="center"
+                alignItems="center"
+                justifyContent="flex-start"
+                className={state.selected ? classes.renderOption : ""}
+                style={{ padding: "10px" }}
+                component={Paper}
+                variant="outlined"
+              >
+                <Grid item xs={2}>
+                  {subType === "AIRPORT" ? (
+                    <FlightIcon
+                      // @ts-ignore
+                      color={state.selected ? "initial" : "primary"}
+                      fontSize="small"
+                    />
+                  ) : (
+                    // @ts-ignore
+                    <LocationOnOutlinedIcon
+                      // @ts-ignore
+                      color={state.selected ? "initial" : "primary"}
+                      fontSize="small"
+                    />
+                  )}
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="body2">
+                    {startCase(lowerCase(name))}&nbsp;
+                    {subType === "AIRPORT" &&
+                    !name.toLocaleLowerCase().includes("airport")
+                      ? "Airport"
+                      : "Airports"}
+                  </Typography>
+                  <Typography variant="caption">
+                    {startCase(lowerCase(cityName))},&nbsp;
+                    {startCase(lowerCase(countryName))}
+                  </Typography>
+                </Grid>
+                <Grid item xs={2}>
+                  <Typography color={state.selected ? "initial" : "primary"}>
+                    {iataCode}
+                  </Typography>
+                </Grid>
+              </Grid>
+            );
+          }}
+          renderInput={(params) => {
+            const updatedParams = {
+              ...params,
+              InputProps: {
+                ...params.InputProps,
+                endAdornment: (
+                  <>{isLoading && <CircularProgress size="20px" />}</>
+                ),
+                startAdornment: (
+                  <>
+                    {isFrom ? (
+                      <FiberManualRecordOutlinedIcon />
+                    ) : (
+                      <LocationOnOutlinedIcon />
+                    )}
+                  </>
+                ),
+              },
+            };
+            return (
+              <TextField
+                error={isError}
+                placeholder={placeHolder}
+                {...updatedParams}
+                variant="outlined"
+              />
+            );
+          }}
+        />
+      </span>
+    </>
   );
 }
 
