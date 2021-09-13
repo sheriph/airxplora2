@@ -297,9 +297,13 @@ export default function Form({ flightOffer, travelerRequirements }) {
                       control={control}
                       defaultValue=""
                       render={({ field: { onChange, value } }) => {
+                        const genderList =
+                          traveler.travelerType === "ADULT"
+                            ? ["Mr", "Ms", "Mrs"]
+                            : ["Mr", "Ms"];
                         return (
                           <div>
-                            {["Mr", "Ms", "Mrs"].map((gender, index) => (
+                            {genderList.map((gender, index) => (
                               <FormControlLabel
                                 //onError
                                 key={index}
@@ -517,7 +521,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
                       error={errors?.email}
                       fullWidth
                       size="small"
-                      onChange={onChange}
+                      onChange={(e) => onChange(trim(e.target.value))}
                       value={value}
                       id="outlined-basic"
                       label="Email"

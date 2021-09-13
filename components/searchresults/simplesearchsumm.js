@@ -33,7 +33,7 @@ export default function SimpleSearchSummary({ flightOffers }) {
   const [start, setStart] = useState(null);
   const [end, setEnd] = useState(null);
   const [traveller, setTraveller] = useState(0);
- // console.log(`cookies`, cookies.xpaformData);
+  // console.log(`cookies`, cookies.xpaformData);
 
   const tripType = cookies.xpaformData?.tripType;
   const from = cookies.xpaformData?.from;
@@ -95,21 +95,6 @@ export default function SimpleSearchSummary({ flightOffers }) {
         </AccordionSummary>
         <AccordionDetails classes={{ root: classes.AccordionDetailsRoot }}>
           <BookingForm />
-        </AccordionDetails>
-      </Accordion>
-      <Accordion>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-        >
-          <Typography className={classes.heading}>Low Fare Finder</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-          </Typography>
         </AccordionDetails>
       </Accordion>
     </div>

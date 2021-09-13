@@ -195,6 +195,7 @@ export default function Search({
               };
               return (
                 <TextField
+                  autoFocus
                   error={isError}
                   placeholder={placeHolder}
                   {...updatedParams}
