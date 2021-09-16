@@ -5,7 +5,7 @@ export default function GetAirlineName({ key }) {
   // console.log(`key`, key);
 
   const fetcher = async () => {
-    let config = {
+    /* let config = {
       method: "post",
       url: "/api/updatecommission",
       data: {
@@ -18,7 +18,7 @@ export default function GetAirlineName({ key }) {
       console.log("response", response);
     } catch (error) {
       console.log("error :>> ", error);
-    }
+    } */
   };
 
   return <Button onClick={fetcher}>Hello</Button>;
