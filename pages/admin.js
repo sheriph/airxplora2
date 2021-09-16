@@ -90,6 +90,7 @@ export default function PersistentDrawerLeft() {
   const [open, setOpen] = React.useState(true);
   const mobile = useMediaQuery("(max-width:600px)");
   const [myRows, setRows] = React.useState([]);
+  const [commissionRows, setCommissionRows] = React.useState([]);
 
   const [tab, setTab] = React.useState("Profile");
 
@@ -177,7 +178,7 @@ export default function PersistentDrawerLeft() {
             <Bookings myRows={myRows} setRows={setRows} />
           </TabPanel>
           <TabPanel classes={{ root: classes.panelRoot }} value="Commission">
-            <Commission />
+            <Commission rows={commissionRows} setRows={setCommissionRows} />
           </TabPanel>
         </TabContext>
       </main>
