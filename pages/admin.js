@@ -21,6 +21,9 @@ import { useMediaQuery } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Bookings from "../components/admin/bookings";
 import Commission from "../components/admin/commission";
+import Profile from "../components/admin/profile";
+import { axiosAirxplora } from "../lib/utilities";
+import Loader from "../components/others/loader";
 
 const drawerWidth = 200;
 
@@ -91,6 +94,8 @@ export default function PersistentDrawerLeft() {
   const mobile = useMediaQuery("(max-width:600px)");
   const [myRows, setRows] = React.useState([]);
   const [commissionRows, setCommissionRows] = React.useState([]);
+  const [profile, setProfile] = React.useState([]);
+  const [isloading, setLoading] = React.useState(false);
 
   const [tab, setTab] = React.useState("Profile");
 
@@ -104,6 +109,38 @@ export default function PersistentDrawerLeft() {
     setOpen(false);
   };
 
+  const getProfile = async () => {
+    const profile = window.sessionStorage.getItem("profile");
+    if (profile) {
+      setProfile(JSON.parse(profile));
+      return;
+    }
+    let config = {
+      method: "get",
+      url: "/api/getprofile",
+    };
+    try {
+      setLoading(true);
+      const profile = await axiosAirxplora(config, 3);
+      console.log(`profile`, profile.data.profile);
+      window.sessionStorage.setItem(
+        "profile",
+        JSON.stringify(profile.data.profile)
+      );
+      setProfile(profile.data.profile);
+    } catch (err) {
+      console.log(`err`, err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (window !== undefined) {
+      getProfile();
+    }
+  }, [null]);
+
   useEffect(() => {
     if (mobile) {
       setOpen(false);
@@ -112,6 +149,7 @@ export default function PersistentDrawerLeft() {
 
   return (
     <div className={classes.root}>
+      <Loader open={isloading} />
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
@@ -172,7 +210,7 @@ export default function PersistentDrawerLeft() {
 
         <TabContext value={tab}>
           <TabPanel classes={{ root: classes.panelRoot }} value="Profile">
-            1
+            <Profile profile={profile} setProfile={setProfile} />
           </TabPanel>
           <TabPanel classes={{ root: classes.panelRoot }} value="Bookings">
             <Bookings myRows={myRows} setRows={setRows} />

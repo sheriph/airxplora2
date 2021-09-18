@@ -12,11 +12,11 @@ export default async function handler(req, res) {
   try {
     await client.connect();
     const database = client.db("airxplora_bookings");
-    const settings = database.collection("settings");
+    const settings = database.collection("commission");
     const options = {
       projection: { _id: 0 },
     };
-    const query = { commission: { $type: "array" } };
+    const query = { commissions: { $type: "array" } };
 
     const rows = await settings.findOne(query, options);
 

@@ -98,7 +98,7 @@ export default function BookingForm({ square = false }) {
   }, [null]);
 
   const onSubmit = async (data) => {
-    console.log("submit data", data, count);
+    console.log("submit data", data, count, commissions);
     const { depDate, retDate, from, to, tripType, bookingClass, passengers } =
       data;
 

@@ -17,6 +17,7 @@ import {
   commissions_,
   flightOffer_,
   openDrawer_,
+  profile_,
   tab_,
   xpaCarriers_,
   xpaDictionary_,
@@ -26,6 +27,8 @@ import {
 import FinaliseBooking from "../components/finalisebooking/finalisebooking";
 import DetailedTripInfo from "../components/searchresults/detailedtripinfo";
 import MyBooking from "../components/mybooking/mybooking";
+import { axiosAirxplora } from "../lib/utilities";
+import Loader from "../components/others/loader";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,11 +50,13 @@ export default function Airxplora() {
   const handleChange = (event, newValue) => {
     setTab(newValue);
   };
+  const [isloading, setLoading] = useState(false);
   const [flightOfferState, setFlightOffer] = useRecoilState(flightOffer_);
   const [open, setOpen] = useRecoilState(openDrawer_);
   const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
   const [carriers, setCarriers] = useRecoilState(xpaCarriers_);
   const [flightOffers, setOffers] = useRecoilState(xpaOffers_);
+  const [profile, setProfile] = useRecoilState(profile_);
   const [flightOffersFixed, setOffersFixed] = useRecoilState(xpaOffersFixed_);
   useEffect(() => {
     if (window !== undefined && !flightOffers) {
@@ -68,18 +73,60 @@ export default function Airxplora() {
         setCarriers(carriers);
       }
     }
-    setCommissions([
-      {
-        id: 1,
-        col2: {
-          iataCode: "F9",
-        },
-        col3: "Mark Up (%)",
-        col4: "10",
-        col5: "Mark Up (₦)",
-        col6: "3500",
-      },
-    ]);
+
+    const getCommissions = async () => {
+      const commissions = window.sessionStorage.getItem("commissions");
+      if (commissions) {
+        setCommissions(JSON.parse(commissions));
+        return;
+      }
+      let config = {
+        method: "get",
+        url: "/api/getcommission",
+      };
+      try {
+        setLoading(true);
+        const commissions = await axiosAirxplora(config, 2);
+        console.log(`commissions`, commissions.data.commissions);
+        setLoading(false);
+        window.sessionStorage.setItem(
+          "commissions",
+          JSON.stringify(commissions.data.commissions)
+        );
+        setCommissions(commissions.data.commissions);
+      } catch (error) {
+        console.log(` commission error`, error);
+      }
+    };
+    const getProfile = async () => {
+      const profile = window.sessionStorage.getItem("profile");
+      if (profile) {
+        setProfile(JSON.parse(profile));
+        return;
+      }
+      let config = {
+        method: "get",
+        url: "/api/getprofile",
+      };
+      try {
+        setLoading(true);
+        const profile = await axiosAirxplora(config, 3);
+        console.log(`profile`, profile.data.profile);
+        window.sessionStorage.setItem(
+          "profile",
+          JSON.stringify(profile.data.profile)
+        );
+        setProfile(profile.data.profile);
+      } catch (err) {
+        console.log(`err`, err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (window !== undefined) {
+      getCommissions();
+      getProfile();
+    }
   }, [null]);
 
   // console.log(`index flightOffers`, flightOffers);
@@ -90,6 +137,7 @@ export default function Airxplora() {
 
   return (
     <Box>
+      <Loader open={isloading} />
       <MyDrawer handleClose={handleClose} open={open}>
         <DetailedTripInfo
           ticketingAgreement={null}

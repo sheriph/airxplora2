@@ -15,10 +15,10 @@ export default async function handler(req, res) {
   try {
     await client.connect();
     const database = client.db("airxplora_bookings");
-    const commission = database.collection("commission");
-    const replacement = { commissions: req.body };
-    const query = { commissions: { $type: "array" } };
-    const result = await commission.replaceOne(query, replacement);
+    const settings = database.collection("profile");
+    const replacement = { profile: req.body };
+    const query = { profile: { $type: "object" } };
+    const result = await settings.replaceOne(query, replacement);
     res.status(200).json(result.acknowledged);
   } catch (err) {
     console.log(`err`, err);

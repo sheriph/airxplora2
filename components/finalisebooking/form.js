@@ -29,7 +29,13 @@ import { pickBy, trim, values, first } from "lodash";
 import { useSnackbar } from "notistack";
 import { useRecoilState } from "recoil";
 import Loader from "../others/loader";
-import { commissions_, order_, tab_, xpaDictionary_ } from "../../lib/state";
+import {
+  commissions_,
+  order_,
+  profile_,
+  tab_,
+  xpaDictionary_,
+} from "../../lib/state";
 
 export default function Form({ flightOffer, travelerRequirements }) {
   const {
@@ -48,6 +54,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
   const [tab, setTab] = useRecoilState(tab_);
   const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
   const [commissions, setCommissions] = useRecoilState(commissions_);
+  const [profile, setProfile] = useRecoilState(profile_);
   const onSubmit = async (data) => {
     console.log(
       "data",
@@ -152,21 +159,21 @@ export default function Form({ flightOffer, travelerRequirements }) {
     const contacts = [
       {
         addresseeName: {
-          firstName: "Sheriff",
-          lastName: "Adeniyi",
+          firstName: "XXXX",
+          lastName: "XXXXX",
         },
-        companyName: "NAIJAGOINGABROAD LTD",
+        companyName: profile?.agencyName || "NAIJAGOINGABROAD LTD",
         purpose: "STANDARD",
         phones: [
           {
             deviceType: "MOBILE",
             countryCallingCode: "234",
-            number: "9065369929",
+            number: profile?.mobile || "9065369929",
           },
         ],
-        emailAddress: "info@naijagoingabroad.com",
+        emailAddress: profile?.email || "info@naijagoingabroad.com",
         address: {
-          lines: ["Opebi Rd, 65c"],
+          lines: ["XXX XXX XXX"],
           postalCode: "23401",
           cityName: "Ikeja",
           countryCode: "NG",

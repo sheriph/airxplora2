@@ -9,6 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import dayjs from "dayjs";
 import { Typography } from "@material-ui/core";
+import { first } from "lodash";
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -25,6 +26,21 @@ export default function BookedTable({ associatedRecords, contacts }) {
   const records = associatedRecords.filter(
     (record) => record.originSystemCode === "GDS"
   )[0];
+
+  let email;
+  let mobile;
+  let agencyName;
+
+  try {
+    const agencyContact = first(contacts);
+    email = agencyContact.emailAddress;
+    mobile = agencyContact.phones[0].number;
+    agencyName = agencyContact.companyName;
+  } catch (err) {
+    console.log(`err creating contact`, err);
+  }
+
+  console.log(`contacts`, contacts);
 
   return (
     <TableContainer>
@@ -52,11 +68,11 @@ export default function BookedTable({ associatedRecords, contacts }) {
             </TableCell>
             <TableCell style={{ borderBottom: "0" }} align="left">
               <Typography className={classes.typography}>
-                NaijaGoingAbroad Ltd
+                {agencyName || ""}
                 <br />
-                info@naijagoingabroad.com
+                {email || ""}
                 <br />
-                09065369929
+                {mobile || ""}
               </Typography>
             </TableCell>
           </TableRow>

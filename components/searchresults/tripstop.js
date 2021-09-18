@@ -91,8 +91,8 @@ export default function TripStop({
                 title="Baggage Allowance"
                 icon={<LocalMallIcon color="primary" />}
               >
-                {baggage.map((bag) => (
-                  <Typography>{bag}</Typography>
+                {baggage.map((bag, index) => (
+                  <Typography key={index}>{bag}</Typography>
                 ))}
               </CustomAccordion>
             </Grid>

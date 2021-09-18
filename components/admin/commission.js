@@ -81,7 +81,7 @@ export default function Commission({ rows, setRows }) {
         setRows(rowUpdate);
       }
     };
-    console.log(`commissionType`, commisionType === "Mark Up (₦)")
+    console.log(`commissionType`, commisionType === "Mark Up (₦)");
     return (
       <Select
         labelId="demo-simple-select-label"
@@ -286,9 +286,7 @@ export default function Commission({ rows, setRows }) {
     let config = {
       method: "post",
       url: "/api/updatecommission",
-      data: {
-        commission: rows,
-      },
+      data: rows,
     };
 
     try {
@@ -311,10 +309,9 @@ export default function Commission({ rows, setRows }) {
       };
       try {
         setLoading(true);
-        const response = await axiosAirxplora(config, 3);
-        const { commission } = response.data;
-        console.log("response", commission);
-        setRows(commission);
+        const commissions = await axiosAirxplora(config, 3);
+        console.log("response", commissions.data.commissions);
+        setRows(commissions.data.commissions);
         enqueueSnackbar("Success", { variant: "success" });
       } catch (error) {
         console.log("error :>> ", error);
