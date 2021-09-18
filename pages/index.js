@@ -14,6 +14,7 @@ import MyDrawer from "../components/others/drawer";
 import FindInPageIcon from "@material-ui/icons/FindInPage";
 import { useRecoilState } from "recoil";
 import {
+  commissions_,
   flightOffer_,
   openDrawer_,
   tab_,
@@ -40,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
 export default function Airxplora() {
   const classes = useStyles();
 
+  const [commissions, setCommissions] = useRecoilState(commissions_);
+
   const [tab, setTab] = useRecoilState(tab_);
   const handleChange = (event, newValue) => {
     setTab(newValue);
@@ -65,6 +68,18 @@ export default function Airxplora() {
         setCarriers(carriers);
       }
     }
+    setCommissions([
+      {
+        id: 1,
+        col2: {
+          iataCode: "F9",
+        },
+        col3: "Mark Up (%)",
+        col4: "10",
+        col5: "Mark Up (₦)",
+        col6: "3500",
+      },
+    ]);
   }, [null]);
 
   // console.log(`index flightOffers`, flightOffers);

@@ -15,8 +15,9 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import ClearIcon from "@material-ui/icons/Clear";
 import { Box } from "@material-ui/core";
 import PriceTable from "./pricetable";
-import { useMoney, verifyPrice } from "../../lib/utilities";
+import { updateFlightOffer, useMoney, verifyPrice } from "../../lib/utilities";
 import {
+  commissions_,
   fareDifference_,
   flightOfferExtended_,
   flightOffer_,
@@ -57,6 +58,7 @@ export default function TripDetailHeader({
   const [travelerRequirements, setRequirements] = useRecoilState(
     travelerRequirements_
   );
+  const [commissions, setCommissions] = useRecoilState(commissions_);
   const [included, setIncluded] = useRecoilState(included_);
   /*   const [flightOfferExtended, setOfferExtended] =
     useRecoilState(flightOfferExtended_); */
@@ -69,7 +71,13 @@ export default function TripDetailHeader({
   const bookNow = async () => {
     try {
       setIsVerifying(true);
-      const response = await verifyPrice(flightOffer);
+      const lessCommissions = {
+        ...flightOffer,
+        price: { ...flightOffer.prevPrice },
+      };
+      console.log(`flightOffer`, flightOffer, lessCommissions);
+
+      const response = await verifyPrice(lessCommissions);
       setIsVerifying(false);
       window.sessionStorage.setItem(
         "xpaBookingOffer",
@@ -82,11 +90,21 @@ export default function TripDetailHeader({
         ...floPriced,
         itineraries: flightOffer.itineraries,
       };
-      setFlightOffer(updatedOffer);
-      if (floPriced.price.grandTotal !== flightOffer.price.grandTotal) {
-        setDiff([flightOffer.price.grandTotal, floPriced.price.grandTotal]);
+      const withCommission = updateFlightOffer(updatedOffer, commissions);
+
+      setFlightOffer(withCommission);
+      if (withCommission.price.grandTotal !== flightOffer.price.grandTotal) {
+        console.log(
+          `flightOffer.price.grandTotal, withCommission.price.grandTotal`,
+          flightOffer.price.grandTotal,
+          withCommission.price.grandTotal
+        );
+        setDiff([
+          flightOffer.price.grandTotal,
+          withCommission.price.grandTotal,
+        ]);
       }
-      console.log(`bookingRequirements`, bookingRequirements);
+      console.log(`withCommission`, withCommission);
       setRequirements(bookingRequirements?.travelerRequirements);
       setIncluded(included);
       setTab("3");

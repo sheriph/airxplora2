@@ -19,6 +19,7 @@ import Search from "./search";
 import { Controller, useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import {
+  commissions_,
   defaultExpanded_,
   isReturnTrip_,
   tab_,
@@ -40,6 +41,7 @@ import {
   getMultiTripsData,
   getOriginDestinations,
   getTravellers,
+  updateFlightOffer,
 } from "../../lib/utilities";
 import Loader from "../others/loader";
 import { useCookies } from "react-cookie";
@@ -65,6 +67,8 @@ export default function BookingForm({ square = false }) {
   const [count, setCount] = useState(1);
   const [defaultExpanded, setDefaultExpanded] =
     useRecoilState(defaultExpanded_);
+
+  const [commissions, setCommissions] = useRecoilState(commissions_);
 
   const {
     handleSubmit,
@@ -185,8 +189,11 @@ export default function BookingForm({ square = false }) {
         dictionaries,
       } = response;
       setDictionary(dictionaries);
-      setOffers(data);
-      setOffersFixed(data);
+      const updateFlightOffers = data.map((flightOffer) =>
+        updateFlightOffer(flightOffer, commissions)
+      );
+      setOffers(updateFlightOffers);
+      setOffersFixed(updateFlightOffers);
       setCarriers(carriers);
       window.sessionStorage.setItem("xpaOffers", JSON.stringify(response));
       setLoading(false);

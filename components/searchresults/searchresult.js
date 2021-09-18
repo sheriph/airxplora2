@@ -12,7 +12,7 @@ export default function SearchResult_({ flightOffers, carriers, dictionary }) {
   return (
     <Grid container spacing={2}>
       {flightOffers.map((flightOffer, index) => (
-        <Grid item xs={12}>
+        <Grid key={index} item xs={12}>
           <LazyLoadComponent>
             <TripCard
               flightOffer={flightOffer}

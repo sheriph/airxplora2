@@ -81,6 +81,7 @@ export default function Commission({ rows, setRows }) {
         setRows(rowUpdate);
       }
     };
+    console.log(`commissionType`, commisionType === "Mark Up (₦)")
     return (
       <Select
         labelId="demo-simple-select-label"

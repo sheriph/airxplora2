@@ -17,6 +17,7 @@ import { flightOffer_, included_, openDrawer_, tab_ } from "../../lib/state";
 import CustomizedDialogs from "../others/dialog";
 
 export default function TripCard({ flightOffer, carriers, dictionaries }) {
+  //  console.log(`flightOffer`, flightOffer);
   const tab = useMediaQuery("(max-width:960px)");
   const {
     itineraries,

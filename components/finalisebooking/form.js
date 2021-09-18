@@ -18,13 +18,18 @@ import { Autocomplete } from "@material-ui/lab";
 import { countries } from "./country";
 import DateSelector from "./dateselector";
 import dayjs from "dayjs";
-import { axiosAirxplora, schema, updateDb } from "../../lib/utilities";
+import {
+  axiosAirxplora,
+  schema,
+  updateDb,
+  updateFlightOffer,
+} from "../../lib/utilities";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { pickBy, trim, values, first } from "lodash";
 import { useSnackbar } from "notistack";
 import { useRecoilState } from "recoil";
 import Loader from "../others/loader";
-import { order_, tab_, xpaDictionary_ } from "../../lib/state";
+import { commissions_, order_, tab_, xpaDictionary_ } from "../../lib/state";
 
 export default function Form({ flightOffer, travelerRequirements }) {
   const {
@@ -42,7 +47,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
   const [order, setOrder] = useRecoilState(order_);
   const [tab, setTab] = useRecoilState(tab_);
   const [dictionary, setDictionary] = useRecoilState(xpaDictionary_);
-
+  const [commissions, setCommissions] = useRecoilState(commissions_);
   const onSubmit = async (data) => {
     console.log(
       "data",
@@ -177,7 +182,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
     const flightOrder = {
       data: {
         type: "flight-order",
-        flightOffers: [flightOffer],
+        flightOffers: [{ ...flightOffer, price: { ...flightOffer.prevPrice } }],
         travelers: travelers,
         remarks: remarks,
         ticketingAgreement: ticketingAgreement,
@@ -206,7 +211,7 @@ export default function Form({ flightOffer, travelerRequirements }) {
       const state = {
         id: response.data.data.id,
         dictionary: dictionary,
-        flightOffer: flightOffer,
+        flightOffer: updateFlightOffer(flightOffer, commissions),
         associatedRecords: response.data.data.associatedRecords,
         travelers: response.data.data.travelers,
       };
