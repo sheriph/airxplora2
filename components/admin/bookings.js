@@ -28,6 +28,7 @@ import MyDrawer from "../others/drawer";
 import DetailedTripInfo from "../searchresults/detailedtripinfo";
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
+import { uniqBy } from "lodash";
 
 function CustomLoadingOverlay() {
   return (
@@ -77,7 +78,7 @@ export default function Bookings({ myRows = [], setRows }) {
       ),
     },
   ];
- // const [myRows, setRows] = useState([]);
+  // const [myRows, setRows] = useState([]);
   const rows = [
     {
       id: 1,
@@ -135,8 +136,9 @@ export default function Bookings({ myRows = [], setRows }) {
           reference: first(item.associatedRecords)["reference"],
         },
       }));
-      const sorted = console.log(`myRows`, myRows);
-      setRows(myRows);
+      const uniqueRows = uniqBy(myRows, "col4");
+      console.log(`uniqueRows`, uniqueRows)
+      setRows(uniqueRows);
     } catch (err) {
       console.log(`err`);
     } finally {

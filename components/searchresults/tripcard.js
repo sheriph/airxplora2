@@ -13,7 +13,13 @@ import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MyDrawer from "../others/drawer";
 import DetailedTripInfo from "./detailedtripinfo";
 import { useRecoilState } from "recoil";
-import { flightOffer_, included_, openDrawer_, tab_ } from "../../lib/state";
+import {
+  farerules_,
+  flightOffer_,
+  included_,
+  openDrawer_,
+  tab_,
+} from "../../lib/state";
 import CustomizedDialogs from "../others/dialog";
 
 export default function TripCard({ flightOffer, carriers, dictionaries }) {
@@ -31,6 +37,7 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [included, setIncluded] = useRecoilState(included_);
   const [activeTab, setTab] = useRecoilState(tab_);
+  const [fareRules, setRules] = useRecoilState(farerules_);
 
   let dialogText;
 
@@ -45,9 +52,14 @@ export default function TripCard({ flightOffer, carriers, dictionaries }) {
         (des) => des.descriptionType === "PENALTIES"
       ),
     }));
+    console.log(`dialogText`, dialogText);
   } catch (error) {
     console.log(`fare rules error`, error);
   }
+
+  useEffect(() => {
+    if (dialogText && activeTab === "3") setRules(dialogText);
+  }, [null]);
 
   return (
     <>

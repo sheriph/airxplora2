@@ -7,9 +7,12 @@ import theme from "../src/theme";
 import { RecoilRoot } from "recoil";
 import { CookiesProvider } from "react-cookie";
 import { SnackbarProvider } from "notistack";
+import { UserProvider } from "@auth0/nextjs-auth0";
 
 export default function MyApp(props) {
   const { Component, pageProps } = props;
+
+  const { user } = pageProps;
 
   React.useEffect(() => {
     // Remove the server-side injected CSS.
@@ -29,18 +32,20 @@ export default function MyApp(props) {
         />
       </Head>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider
-          anchorOrigin={{ horizontal: "right", vertical: "top" }}
-          maxSnack={3}
-        >
-          <CookiesProvider>
-            <RecoilRoot>
-              {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-              <CssBaseline />
-              <Component {...pageProps} />
-            </RecoilRoot>
-          </CookiesProvider>
-        </SnackbarProvider>
+        <UserProvider user={user}>
+          <SnackbarProvider
+            anchorOrigin={{ horizontal: "right", vertical: "top" }}
+            maxSnack={3}
+          >
+            <CookiesProvider>
+              <RecoilRoot>
+                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+                <CssBaseline />
+                <Component {...pageProps} />
+              </RecoilRoot>
+            </CookiesProvider>
+          </SnackbarProvider>
+        </UserProvider>
       </ThemeProvider>
     </React.Fragment>
   );

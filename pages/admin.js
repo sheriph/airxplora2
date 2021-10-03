@@ -17,13 +17,14 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import InboxIcon from "@material-ui/icons/MoveToInbox";
 import MailIcon from "@material-ui/icons/Mail";
-import { useMediaQuery } from "@material-ui/core";
+import { Box, Button, useMediaQuery } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Bookings from "../components/admin/bookings";
 import Commission from "../components/admin/commission";
 import Profile from "../components/admin/profile";
 import { axiosAirxplora } from "../lib/utilities";
 import Loader from "../components/others/loader";
+import { useUser, withPageAuthRequired } from "@auth0/nextjs-auth0";
 
 const drawerWidth = 200;
 
@@ -87,7 +88,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function PersistentDrawerLeft() {
+export default function Admin() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
@@ -96,8 +97,11 @@ export default function PersistentDrawerLeft() {
   const [commissionRows, setCommissionRows] = React.useState([]);
   const [profile, setProfile] = React.useState([]);
   const [isloading, setLoading] = React.useState(false);
-
+  const { user, error, isLoading } = useUser();
+  console.log(`user`, user);
   const [tab, setTab] = React.useState("Profile");
+
+  const { email } = user;
 
   const handleChange = (value) => setTab(value);
 
@@ -169,6 +173,13 @@ export default function PersistentDrawerLeft() {
           <Typography variant="h6" noWrap>
             Admin Panel
           </Typography>
+          <Box
+            sx={{ display: "flex", justifyContent: "flex-end", flexGrow: 1 }}
+          >
+            <Button href="/api/auth/logout" color="inherit">
+              LOGOUT
+            </Button>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -223,3 +234,5 @@ export default function PersistentDrawerLeft() {
     </div>
   );
 }
+
+export const getServerSideProps = withPageAuthRequired();
