@@ -134,7 +134,6 @@ export default function Airxplora() {
   const handleClose = () => {
     setOpen(false);
   };
-
   return (
     <Box>
       <Loader open={isloading} />

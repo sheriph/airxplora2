@@ -59,7 +59,7 @@ export default function Search({
   };
 
   const onInputChange = (e, v, r) => {
-    console.log(`v`, v, r);
+    console.log(`input change`, v, r);
     if (r === "input") {
       const getSuggestions = async () => {
         setLoading(true);
@@ -90,6 +90,7 @@ export default function Search({
       debouncedChangeHandler.cancel;
     };
   }, []);
+
 
   return (
     <>
@@ -141,14 +142,14 @@ export default function Search({
                     {subType === "AIRPORT" ? (
                       <FlightIcon
                         // @ts-ignore
-                        color={state.selected ? "initial" : "primary"}
+                        color={state.selected ? "inherit" : "primary"}
                         fontSize="small"
                       />
                     ) : (
                       // @ts-ignore
                       <LocationOnOutlinedIcon
                         // @ts-ignore
-                        color={state.selected ? "initial" : "primary"}
+                        color={state.selected ? "inherit" : "primary"}
                         fontSize="small"
                       />
                     )}
@@ -167,7 +168,7 @@ export default function Search({
                     </Typography>
                   </Grid>
                   <Grid item xs={2}>
-                    <Typography color={state.selected ? "initial" : "primary"}>
+                    <Typography color={state.selected ? "inherit" : "primary"}>
                       {iataCode}
                     </Typography>
                   </Grid>
@@ -262,14 +263,14 @@ export default function Search({
                   {subType === "AIRPORT" ? (
                     <FlightIcon
                       // @ts-ignore
-                      color={state.selected ? "initial" : "primary"}
+                      color={state.selected ? "inherit" : "primary"}
                       fontSize="small"
                     />
                   ) : (
                     // @ts-ignore
                     <LocationOnOutlinedIcon
                       // @ts-ignore
-                      color={state.selected ? "initial" : "primary"}
+                      color={state.selected ? "inherit" : "primary"}
                       fontSize="small"
                     />
                   )}
@@ -288,7 +289,7 @@ export default function Search({
                   </Typography>
                 </Grid>
                 <Grid item xs={2}>
-                  <Typography color={state.selected ? "initial" : "primary"}>
+                  <Typography color={state.selected ? "inherit" : "primary"}>
                     {iataCode}
                   </Typography>
                 </Grid>
