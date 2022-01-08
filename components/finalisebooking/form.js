@@ -196,12 +196,16 @@ export default function Form({ flightOffer, travelerRequirements }) {
         contacts: contacts,
       },
     };
-
+    const baseUrl =
+      process.env.NODE_ENV === "production"
+        ? process.env.NEXT_PUBLIC_PRD_CLIENT_BASE_URL
+        : process.env.NEXT_PUBLIC_CLIENT_BASE_URL;
+    const test = "api.amadeus.com";
     let postData = flightOrder;
     console.log(`flightOrder`, flightOrder);
     let config = {
       method: "post",
-      url: "https://test.api.amadeus.com/v1/booking/flight-orders",
+      url: `https://${baseUrl}/v1/booking/flight-orders`,
       headers: {
         Authorization: `Bearer ${JSON.parse(
           window.localStorage.getItem("access_token")
